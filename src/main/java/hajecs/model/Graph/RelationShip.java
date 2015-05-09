@@ -33,6 +33,16 @@ public class RelationShip{
         this.endNode = endNode;
     }
 
+    public static RelationShip getReversedRelationShip(RelationShip relationShip) {
+        RelationShip reversedRelationShip = new RelationShip(relationShip.getEndNode(), relationShip.getBeginNode());
+        return reversedRelationShip;
+    }
+
+    public RelationShip getReversedRelationShip() {
+        RelationShip reversedRelationShip = new RelationShip(getEndNode(), getBeginNode());
+        return reversedRelationShip;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,5 +95,9 @@ public class RelationShip{
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    public void show() {
+        System.out.println("RelationShip : " + beginNode.getName() + " -> " + endNode.getName());
     }
 }
