@@ -67,6 +67,10 @@ public abstract class AbstractTask {
         this.id = id;
     }
 
+    public int getNumberOfWorkers() {
+        return getWorkerStorage().size();
+    }
+
     public void addWorkers(Person ... workers) {
         for (Person person : workers)
             workerStorage.add(person);

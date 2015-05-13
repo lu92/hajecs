@@ -2,7 +2,6 @@ package hajecs.model.Graph;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -33,11 +32,17 @@ public abstract class AbstractGraph {
             nodeStorage.add(node);
     }
 
-
     public void deleteAllRelationShipsOnSelectedNode(String nodeName) {
+        AbstractNode selectedNode = findNode(nodeName);
+        for (String neighbour : selectedNode.getNamesOfNeighbours()) {
+            deleteRelationShipBetweenTwoNodes(selectedNode.getName(), neighbour);
+        }
+    }
+
+    public void deleteAllRelationShipsOnSelectedNodeOld(String nodeName) {
         AbstractNode node = findNode(nodeName);
 //        System.out.println("size neighbour " + node.getNumberOfNeighbours());
-        for (int i=0; i< node.calculateNuberOfNeighBourNodes(); i++) {
+        for (int i=0; i< node.calculateNumberOfNeighBourNodes(); i++) {
             AbstractNode neighbour = node.getNeighbourNodeStorage().get(i);
 //            System.out.println(neighbour.getName() + "*");
 //            System.out.println("delete neighbour " + neighbour.getName());
@@ -49,7 +54,7 @@ public abstract class AbstractGraph {
 
         if (isEveryNodeExists(nodeName)) {
 //            AbstractNode node = findNode(nodeName);
-
+            this.deleteAllRelationShipsOnSelectedNode(nodeName);
             removeNodes(nodeName);
         } else
             throw new IllegalArgumentException("Cannot remove doesn't exist node");
@@ -98,9 +103,17 @@ public abstract class AbstractGraph {
 
     public void addRelationShips(String fromNodeName, String toNodeNames, String ... toOtherNodes) {
 
-        addRelationShips(findNode(fromNodeName), findNode(toNodeNames));
-        for (String node : toOtherNodes)
-            addRelationShips(findNode(fromNodeName), findNode(node));
+        AbstractNode fromNode = findNode(fromNodeName);
+        AbstractNode toNode = findNode(toNodeNames);
+
+        if (fromNode == null || toNode == null)
+            System.out.println("Cannot find nodes to create relationship");
+        else {
+
+            addRelationShips(findNode(fromNodeName), findNode(toNodeNames));
+            for (String node : toOtherNodes)
+                addRelationShips(findNode(fromNodeName), findNode(node));
+        }
     }
 
     public void addRelationShips(AbstractNode currentNode, AbstractNode toNodeNames, AbstractNode ... toOtherNodes) {

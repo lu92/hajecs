@@ -10,6 +10,23 @@ public abstract class AbstractNode {
 
     protected Long id;
     protected String name;
+    protected List<AbstractNode> neighbourNodeStorage = new ArrayList<>();
+    protected List<RelationShip> outGoingRelationShipStorage = new ArrayList<RelationShip>();
+    protected List<RelationShip> inCommingRelationShipStorage = new ArrayList<RelationShip>();
+
+    public AbstractNode() {
+    }
+
+    public AbstractNode(String name) {
+        this.name = name;
+    }
+
+    public AbstractNode(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+
 
     public List<AbstractNode> getNeighbourNodeStorage() {
         return neighbourNodeStorage;
@@ -22,23 +39,12 @@ public abstract class AbstractNode {
     public List<RelationShip> getInCommingRelationShipStorage() {
         return inCommingRelationShipStorage;
     }
-
     public void setInCommingRelationShipStorage(List<RelationShip> inCommingRelationShipStorage) {
         this.inCommingRelationShipStorage = inCommingRelationShipStorage;
     }
 
-    protected List<AbstractNode> neighbourNodeStorage = new ArrayList<>();
-    protected List<RelationShip> outGoingRelationShipStorage = new ArrayList<RelationShip>();
-    protected List<RelationShip> inCommingRelationShipStorage = new ArrayList<RelationShip>();
 
-    public AbstractNode(String name) {
-        this.name = name;
-    }
 
-    public AbstractNode(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public boolean isIsolated() {
         if (neighbourNodeStorage.isEmpty() &&
@@ -49,7 +55,7 @@ public abstract class AbstractNode {
     }
 
 
-    public int calculateNuberOfNeighBourNodes() {
+    public int calculateNumberOfNeighBourNodes() {
         List<RelationShip> allRelationShips = new ArrayList<>();
         allRelationShips.addAll(getInCommingRelationShipStorage());
         allRelationShips.addAll(getOutGoingRelationShipStorage());
@@ -74,6 +80,17 @@ public abstract class AbstractNode {
 
     public void addOutgoingRelationShip(RelationShip relationShip) {
         this.outGoingRelationShipStorage.add(relationShip);
+    }
+
+    public List<String> getNamesOfNeighbours() {
+        List<String> names = new ArrayList<>();
+
+        if (!this.isIsolated()) {
+            for (AbstractNode neighbour : this.getNeighbourNodeStorage()) {
+                names.add(neighbour.getName());
+            }
+        }
+        return names;
     }
 
     public int getNumberOfInCommingRelationShips() {

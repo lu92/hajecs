@@ -16,6 +16,11 @@ public class DailyTask extends AbstractTask{
     public DailyTask() {
     }
 
+    public DailyTask(String name, String describe, String day) {
+        super(name, describe, day, day);
+        singleTaskStorage.add(new SingleTask(name));
+    }
+
     public DailyTask(String name, String describe, String day, String taskName) {
         super(name, describe, day, day);
         singleTaskStorage.add(new SingleTask(taskName));

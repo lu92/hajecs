@@ -13,7 +13,7 @@ public class SingleTask {
 
     @Id @GeneratedValue
     private Long id;
-    private String duration;    //  czas trwania np 13-14
+    private String duration;    //  czas trwania np 13-14 w godzinach
     private String task;
     private boolean executed;
 

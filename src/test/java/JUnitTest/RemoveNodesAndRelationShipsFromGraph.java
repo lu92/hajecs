@@ -1,12 +1,12 @@
 package JUnitTest;
 
 import hajecs.model.Graph.AbstractGraph;
-import hajecs.model.Graph.AbstractNode;
 import hajecs.model.Graph.Graph;
 import hajecs.model.Graph.Node;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Before;
+
 /**
  * Created by lucjan on 09.05.15.
  */
@@ -54,13 +54,13 @@ public class RemoveNodesAndRelationShipsFromGraph {
         int [] neighbours = {2, 5, 2, 2, 1, 3, 1};
         String[] nodeNames = {"A", "B", "C", "D", "E", "F", "G"};
 
-        Assert.assertEquals(neighbours[0], graph.findNode(nodeNames[0]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[1], graph.findNode(nodeNames[1]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[2], graph.findNode(nodeNames[2]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[3], graph.findNode(nodeNames[3]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[4], graph.findNode(nodeNames[4]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[5], graph.findNode(nodeNames[5]).calculateNuberOfNeighBourNodes());
-        Assert.assertEquals(neighbours[6], graph.findNode(nodeNames[6]).calculateNuberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[0], graph.findNode(nodeNames[0]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[1], graph.findNode(nodeNames[1]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[2], graph.findNode(nodeNames[2]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[3], graph.findNode(nodeNames[3]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[4], graph.findNode(nodeNames[4]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[5], graph.findNode(nodeNames[5]).calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(neighbours[6], graph.findNode(nodeNames[6]).calculateNumberOfNeighBourNodes());
 
     }
 
@@ -193,41 +193,33 @@ public class RemoveNodesAndRelationShipsFromGraph {
         Assert.assertEquals(10, graph.getNumberOfRelationShips());
     }
 
-//    @Test
+    @Test
     public void removeConnectedNode() {
         graph.removeNodeRegardlessOfRelationShips("B");
-        Assert.assertEquals(6, graph.getNumberOfNodes());
-        Assert.assertEquals(3, graph.getNumberOfRelationShips());
+        graph.removeNodeRegardlessOfRelationShips("G");
+        Assert.assertEquals(5, graph.getNumberOfNodes());
+        Assert.assertEquals(2, graph.getNumberOfRelationShips());
+        Assert.assertTrue(graph.findNode("D").isIsolated());
+        Assert.assertTrue(graph.findNode("E").isIsolated());
+        Assert.assertEquals(2, graph.findNode("F").calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(0, graph.findNode("F").getNumberOfInCommingRelationShips());
+        Assert.assertEquals(2, graph.findNode("F").getNumberOfOutGoingRelationShips());
+        Assert.assertEquals(1, graph.findNode("A").getNumberOfInCommingRelationShips());
+        Assert.assertEquals(0, graph.findNode("A").getNumberOfOutGoingRelationShips());
+        Assert.assertEquals(1, graph.findNode("C").getNumberOfInCommingRelationShips());
+        Assert.assertEquals(0, graph.findNode("C").getNumberOfOutGoingRelationShips());
     }
 
     @Test
     public void removeAllRelationShipsOnNode() {
-
-//        graph.deleteRelationShipBetweenTwoNodes("B", "D");
-//        graph.deleteRelationShipBetweenTwoNodes("B", "C");
-//        graph.deleteRelationShipBetweenTwoNodes("B", "A");
-//        graph.deleteRelationShipBetweenTwoNodes("B", "E");
-//        graph.deleteRelationShipBetweenTwoNodes("B", "F");
-
-        String [] names = {"D", "C", "A", "E", "F"};
-//        for (int i=0; i<5; i++)
-//            graph.deleteRelationShipBetweenTwoNodes("B", names[i]);
-
-        AbstractNode currentNode = graph.findNode("B");
-        for (int i=0; i<graph.findNode("B").getNeighbourNodeStorage().size(); i++) {
-            String neighbour = currentNode.getNeighbourNodeStorage().get(i).getName();
-            System.out.println(neighbour);
-            graph.deleteRelationShipBetweenTwoNodes("B", names[i]);
-        }
-
-//        graph.deleteAllRelationShipsOnSelectedNode("B");
-
-//        graph.deleteRelationShipBetweenTwoNodes("B", "C");
-        System.out.println("neighbours = " + graph.findNode("B").calculateNuberOfNeighBourNodes());
-        graph.findNode("B").showOutGoingRelationShips();
-        graph.findNode("B").showInCommingRelationShips();
-//        Assert.assertEquals(0, graph.findNode("B").calculateNuberOfNeighBourNodes());
-//        Assert.assertTrue(graph.findNode("B").isIsolated());
+        graph.deleteAllRelationShipsOnSelectedNode("B");
+//        System.out.println("neighbours = " + graph.findNode("B").calculateNumberOfNeighBourNodes());
+        Assert.assertEquals(0, graph.findNode("B").calculateNumberOfNeighBourNodes());
+        Assert.assertTrue(graph.findNode("B").isIsolated());
+        Assert.assertEquals(3, graph.getNumberOfRelationShips());
+        Assert.assertEquals(7, graph.getNumberOfNodes());
+        Assert.assertTrue(graph.findNode("E").isIsolated());
+        Assert.assertEquals(1, graph.findNode("D").calculateNumberOfNeighBourNodes());
     }
 
 }

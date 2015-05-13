@@ -19,18 +19,22 @@ public class SeveralDaysTask extends AbstractTask {
 
     public SeveralDaysTask(String name, String describe) {
         super(name, describe);
+        getSingleTaskStorage().add(new SingleTask(name));
     }
 
     public SeveralDaysTask(String name, String describe, String start, String deadline) {
         super(name, describe, start, deadline);
+        getSingleTaskStorage().add(new SingleTask(name));
     }
 
     public SeveralDaysTask(String name, String describe, Date start, Date deadline, List<Role> requirements) {
         super(name, describe, start, deadline, requirements);
+        getSingleTaskStorage().add(new SingleTask(name));
     }
 
     public SeveralDaysTask(Long id, String name, String describe, Date start, Date deadline, List<Role> requirements) {
         super(id, name, describe, start, deadline, requirements);
+        getSingleTaskStorage().add(new SingleTask(name));
     }
 
     public void changeTaskName(String taskName) {
