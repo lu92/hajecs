@@ -6,7 +6,6 @@ import hajecs.model.Actors.Worker;
 import hajecs.model.Graph.MileStone;
 import hajecs.model.Task.DailyTask;
 import hajecs.model.Task.SeveralDaysTask;
-import hajecs.repositories.PersonRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,11 +65,58 @@ public class MileStoneTest {
         mileStone.setStartTaskNode("Przygotowanie dokumentacji");
         mileStone.setEndTaskNode("Skladanie projektu w calosc");
 
+        mileStone.setWorkerToTask("Przygotowanie dokumentacji",
+                (Worker) PersonResource.getJavaDeveloperWojciechSeliga(),
+                (Worker) PersonResource.getJavaDeveloperAdamWojcik());
+
         mileStone.setWorkerToTask("Implementacja WEB",
                 (Worker) PersonResource.getWebDeveloperDominikNocon(),
                 (Worker) PersonResource.getWebDeveloperPrzemekRoman());
 
+        mileStone.setWorkerToTask("Implementacja logiki aplikacji",
+                (Worker) PersonResource.getJavaDeveloperAdamWojcik(),
+                (Worker) PersonResource.getJavaDeveloperKamilMilosz());
+
+        mileStone.setWorkerToTask("Integracja WEB SERVER",
+                (Worker) PersonResource.getJavaDeveloperPiotrNawalka(),
+                (Worker) PersonResource.getJavaDeveloperWojciechSeliga(),
+                (Worker) PersonResource.getWebDeveloperMateuszStepala(),
+                (Worker) PersonResource.getWebDeveloperDominikNocon());
+
+        mileStone.setWorkerToTask("Skladanie projektu w calosc",
+                (Worker) PersonResource.getJavaDeveloperWojciechSeliga(),
+                (Worker) PersonResource.getWebDeveloperDominikNocon(),
+                (Worker) PersonResource.getDatabaseDeveloperAdrianKrawiec(),
+                (Worker) PersonResource.getDatabaseDeveloperLukaszDebinski(),
+                (Worker) PersonResource.getUXDesignerMonikaStokrotka(),
+                (Worker) PersonResource.getWebDeveloperMateuszStepala());
+
+        mileStone.setWorkerToTask("Przygotowanie bazy danych",
+                (Worker) PersonResource.getDatabaseDeveloperAdrianKrawiec());
+
+        mileStone.setWorkerToTask("bazy danych: funkcje",
+                (Worker) PersonResource.getDatabaseDeveloperAdrianKrawiec());
+
+        mileStone.setWorkerToTask("bazy danych: procedury",
+                (Worker) PersonResource.getDatabaseDeveloperLukaszDebinski());
+
+        mileStone.setWorkerToTask("bazy danych: triggery",
+                (Worker) PersonResource.getDatabaseDeveloperAdrianCiecholewski());
+
+        mileStone.setWorkerToTask("Testowanie bazy danych",
+                (Worker) PersonResource.getDatabaseDeveloperAdrianKrawiec(),
+                (Worker) PersonResource.getDatabaseDeveloperLukaszDebinski());
+
+        Assert.assertEquals(2, mileStone.findNodeByTask("Przygotowanie dokumentacji").getTask().getNumberOfWorkers());
+        Assert.assertEquals(2, mileStone.findNodeByTask("Implementacja logiki aplikacji").getTask().getNumberOfWorkers());
         Assert.assertEquals(2, mileStone.findNodeByTask("Implementacja WEB").getTask().getNumberOfWorkers());
+        Assert.assertEquals(4, mileStone.findNodeByTask("Integracja WEB SERVER").getTask().getNumberOfWorkers());
+        Assert.assertEquals(1, mileStone.findNodeByTask("Przygotowanie bazy danych").getTask().getNumberOfWorkers());
+        Assert.assertEquals(1, mileStone.findNodeByTask("bazy danych: funkcje").getTask().getNumberOfWorkers());
+        Assert.assertEquals(1, mileStone.findNodeByTask("bazy danych: procedury").getTask().getNumberOfWorkers());
+        Assert.assertEquals(1, mileStone.findNodeByTask("bazy danych: triggery").getTask().getNumberOfWorkers());
+        Assert.assertEquals(2, mileStone.findNodeByTask("Testowanie bazy danych").getTask().getNumberOfWorkers());
+        Assert.assertEquals(6, mileStone.findNodeByTask("Skladanie projektu w calosc").getTask().getNumberOfWorkers());
     }
 
     @Test

@@ -39,16 +39,6 @@ public abstract class AbstractGraph {
         }
     }
 
-    public void deleteAllRelationShipsOnSelectedNodeOld(String nodeName) {
-        AbstractNode node = findNode(nodeName);
-//        System.out.println("size neighbour " + node.getNumberOfNeighbours());
-        for (int i=0; i< node.calculateNumberOfNeighBourNodes(); i++) {
-            AbstractNode neighbour = node.getNeighbourNodeStorage().get(i);
-//            System.out.println(neighbour.getName() + "*");
-//            System.out.println("delete neighbour " + neighbour.getName());
-            deleteRelationShipBetweenTwoNodes(node.getName(), neighbour.getName());
-        }
-    }
 
     public void removeNodeRegardlessOfRelationShips(String nodeName) {
 

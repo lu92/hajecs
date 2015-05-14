@@ -1,22 +1,16 @@
 package hajecs.model.Graph;
-import javax.persistence.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
-@Entity
 public class RelationShip{
 
-    @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
     private AbstractNode beginNode;
 
-    @ManyToOne
     private AbstractNode endNode;
 
-    @Transient
     private boolean visited = false; // for DFS
 
     public RelationShip() {

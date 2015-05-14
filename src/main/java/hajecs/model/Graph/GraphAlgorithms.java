@@ -7,8 +7,9 @@ import java.util.Date;
  */
 public interface GraphAlgorithms {
     boolean checkAcyclicality(AbstractGraph graph);
+    boolean checkDirected(AbstractGraph graph);
     int calculateDeadline(AbstractGraph graph);
     Date getDeadline(AbstractGraph graph);
-
-
+    void doDFS();
+    void doBFS();
 }
