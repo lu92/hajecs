@@ -3,17 +3,23 @@ package hajecs.model.Task;
 
 import hajecs.model.Actors.Person;
 import hajecs.model.personalData.Role;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
+@NodeEntity
 public abstract class AbstractTask {
 
+    @GraphId
     protected Long id;
     protected String name;
     protected String describe;
@@ -21,11 +27,17 @@ public abstract class AbstractTask {
     protected Date end;
     protected Date deadline;
 
-    protected List<Person> workerStorage = new ArrayList<Person>();
+    @Fetch
+    @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
+    protected Set<Person> workerStorage = new HashSet<>();
 
-    protected List<Role> roleStorage = new ArrayList<Role>();
+    @Fetch
+    @RelatedTo(type = "ROLE_TASK_RELATION", direction = Direction.BOTH)
+    protected Set<Role> roleStorage = new HashSet<>();
 
-    protected List<SingleTask> singleTaskStorage = new ArrayList<SingleTask>();
+    @Fetch
+    @RelatedTo(type = "SINGLE_TASK_RELATION", direction = Direction.BOTH)
+    protected Set<SingleTask> singleTaskStorage = new HashSet<>();
 
     public AbstractTask() {
     }
@@ -43,20 +55,20 @@ public abstract class AbstractTask {
     }
 
     //  bez dat i id
-    public AbstractTask(String name, String describe, List<Role> roleStorage) {
+    public AbstractTask(String name, String describe, Set<Role> roleStorage) {
         this.name = name;
         this.describe = describe;
         this.roleStorage = roleStorage;
     }
 
-    public AbstractTask(String name, String describe, Date start, Date deadline, List<Role> roleStorage) {
+    public AbstractTask(String name, String describe, Date start, Date deadline, Set<Role> roleStorage) {
         this(name, describe, roleStorage);
         this.start = start;
         this.deadline = deadline;
     }
 
 
-    public AbstractTask(Long id, String name, String describe, Date start, Date deadline, List<Role> roleStorage) {
+    public AbstractTask(Long id, String name, String describe, Date start, Date deadline, Set<Role> roleStorage) {
         this(name, describe, start, deadline, roleStorage);
         this.id = id;
     }
@@ -85,8 +97,8 @@ public abstract class AbstractTask {
     public abstract void addTasks(SingleTask ... tasks);
     public abstract boolean isExecuted();
     public abstract int getProgress();
-    public abstract List<SingleTask> getPerformedTasks();
-    public abstract List<SingleTask> getNotPerformedTasks();
+    public abstract Set<SingleTask> getPerformedTasks();
+    public abstract Set<SingleTask> getNotPerformedTasks();
     public abstract int getNumberOfPerformedTasks();
     public abstract int getNumberOfNotPerformedTasks();
     public abstract void endTask(int id);
@@ -140,27 +152,27 @@ public abstract class AbstractTask {
         this.deadline = deadline;
     }
 
-    public List<Person> getWorkerStorage() {
+    public Set<Person> getWorkerStorage() {
         return workerStorage;
     }
 
-    public void setWorkerStorage(List<Person> workerStorage) {
+    public void setWorkerStorage(Set<Person> workerStorage) {
         this.workerStorage = workerStorage;
     }
 
-    public List<Role> getRoleStorage() {
+    public Set<Role> getRoleStorage() {
         return roleStorage;
     }
 
-    public void setRoleStorage(List<Role> roleStorage) {
+    public void setRoleStorage(Set<Role> roleStorage) {
         this.roleStorage = roleStorage;
     }
 
-    public List<SingleTask> getSingleTaskStorage() {
+    public Set<SingleTask> getSingleTaskStorage() {
         return singleTaskStorage;
     }
 
-    public void setSingleTaskStorage(List<SingleTask> singleTaskStorage) {
+    public void setSingleTaskStorage(Set<SingleTask> singleTaskStorage) {
         this.singleTaskStorage = singleTaskStorage;
     }
 }

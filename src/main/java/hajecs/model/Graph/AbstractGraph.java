@@ -1,20 +1,38 @@
 package hajecs.model.Graph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.*;
+
+import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
+@NodeEntity
 public abstract class AbstractGraph {
+
+    @GraphId
     protected Long id;
     protected String name;
     protected String describe;
-    protected List<AbstractNode> nodeStorage = new ArrayList<AbstractNode>();
-    protected List<RelationShip> graphRelationShipStorage = new ArrayList<RelationShip>();
+
+    @Fetch
+    @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
+    protected Set<AbstractNode> nodeStorage = new HashSet<>();
+
+//    @Fetch
+//    @RelatedTo(type = "GRAPH_RELATIONSHIP_RELATION", direction = Direction.BOTH)
+    @Transient
+//    @RelatedToVia
+//    @Fetch @RelatedToVia(type = "RELATED_TO")
+    protected Set<RelationShip> graphRelationShipStorage = new HashSet<>();
 
     public AbstractGraph() {
+    }
+
+    public AbstractGraph(String name) {
+        this.name = name;
     }
 
     public AbstractGraph(String name, String describe) {
@@ -145,23 +163,27 @@ public abstract class AbstractGraph {
     }
 
     public void deleteRelationShipFromBeginNodeToEndNode(AbstractNode beginNode, AbstractNode endNode) {
-        for (int i=0; i<beginNode.getOutGoingRelationShipStorage().size(); i++) {
-            RelationShip relationShip = beginNode.getOutGoingRelationShipStorage().get(i);
-            if (relationShip.getEndNode().equals(endNode))
-                beginNode.getOutGoingRelationShipStorage().remove(relationShip);
+        try {
+            for (int i = 0; i < beginNode.getOutGoingRelationShipStorage().size(); i++) {
+                RelationShip relationShip = beginNode.getOutGoingRelationShipAtPosition(i); //  tu zmieniono
+                if (relationShip.getEndNode().equals(endNode))
+                    beginNode.getOutGoingRelationShipStorage().remove(relationShip);
                 endNode.getInCommingRelationShipStorage().remove(relationShip);     //
-        }
+            }
 
-        for (int i=0; i<beginNode.getInCommingRelationShipStorage().size(); i++) {
-            RelationShip relationShip = beginNode.getInCommingRelationShipStorage().get(i);
-            if (relationShip.getBeginNode().equals(endNode))
-                beginNode.getInCommingRelationShipStorage().remove(relationShip);
+            for (int i = 0; i < beginNode.getInCommingRelationShipStorage().size(); i++) {
+                RelationShip relationShip = beginNode.getInCommingRelationShipAtPosition(i); //  tu zmienione
+                if (relationShip.getBeginNode().equals(endNode))
+                    beginNode.getInCommingRelationShipStorage().remove(relationShip);
                 endNode.getOutGoingRelationShipStorage().remove(relationShip);      //
-        }
+            }
 
-        if (!beginNode.getInCommingRelationShipStorage().contains(new RelationShip(endNode, beginNode))) {
-            beginNode.getNeighbourNodeStorage().remove(endNode);
-            endNode.getNeighbourNodeStorage().remove(beginNode);
+            if (!beginNode.getInCommingRelationShipStorage().contains(new RelationShip(endNode, beginNode))) {
+                beginNode.getNeighbourNodeStorage().remove(endNode);
+                endNode.getNeighbourNodeStorage().remove(beginNode);
+            }
+        } catch (Exception e) {
+
         }
         deleteRelationsShipBetweenTwoNodesFromGraph(beginNode, endNode);
     }
@@ -176,19 +198,36 @@ public abstract class AbstractGraph {
     }
 
     public void deleteRelationsShipBetweenTwoNodesFromGraph(AbstractNode beginNode, AbstractNode endNode) {
-        for (int i=0; i<graphRelationShipStorage.size(); i++) {
-            RelationShip relationShip = this.graphRelationShipStorage.get(i);
-            if (relationShip.getBeginNode().equals(beginNode) && relationShip.getEndNode().equals(endNode)) {
-                this.graphRelationShipStorage.remove(relationShip);
+        try {
+            for (int i = 0; i < graphRelationShipStorage.size(); i++) {
+                RelationShip relationShip = getGraphRelationShipAtPosition(i);
+                if (relationShip.getBeginNode().equals(beginNode) && relationShip.getEndNode().equals(endNode)) {
+                    this.graphRelationShipStorage.remove(relationShip);
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private RelationShip getGraphRelationShipAtPosition(int position) throws Exception {
+        if (position >= 0 && position <= graphRelationShipStorage.size()-1) {
+            int i=0;
+            for (RelationShip relationShip : graphRelationShipStorage) {
+                if (i++ == position)
+                    return relationShip;
             }
         }
+        else
+            throw new Exception("");
+        return null;
     }
 
 
 
     public void showAllRelationShips() {
-        for (int i=0; i<this.graphRelationShipStorage.size(); i++) {
-            this.graphRelationShipStorage.get(i).show();
+        for (RelationShip relationShip : graphRelationShipStorage) {
+            relationShip.show();
         }
     }
 
@@ -241,19 +280,19 @@ public abstract class AbstractGraph {
         this.describe = describe;
     }
 
-    public List<AbstractNode> getNodeStorage() {
+    public Set<AbstractNode> getNodeStorage() {
         return nodeStorage;
     }
 
-    public void setNodeStorage(List<AbstractNode> nodeStorage) {
+    public void setNodeStorage(Set<AbstractNode> nodeStorage) {
         this.nodeStorage = nodeStorage;
     }
 
-    public List<RelationShip> getGraphRelationShipStorage() {
+    public Set<RelationShip> getGraphRelationShipStorage() {
         return graphRelationShipStorage;
     }
 
-    public void setGraphRelationShipStorage(List<RelationShip> graphRelationShipStorage) {
+    public void setGraphRelationShipStorage(Set<RelationShip> graphRelationShipStorage) {
         this.graphRelationShipStorage = graphRelationShipStorage;
     }
 

@@ -1,21 +1,31 @@
 package hajecs.model.Task;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
-import javax.persistence.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
 
+@NodeEntity
 public class SingleTask {
 
+    @GraphId
     private Long id;
     private String duration;    //  czas trwania np 13-14 w godzinach
     private String task;
+
+    @Transient
     private boolean executed;
 
 
+    @Fetch
+    @RelatedTo(type = "SINGLE_TASK_RELATION", direction = Direction.BOTH)
     private AbstractTask abstractTask;
 
     public SingleTask() {
@@ -69,6 +79,14 @@ public class SingleTask {
 
     public void setExecuted(boolean executed) {
         this.executed = executed;
+    }
+
+    public AbstractTask getAbstractTask() {
+        return abstractTask;
+    }
+
+    public void setAbstractTask(AbstractTask abstractTask) {
+        this.abstractTask = abstractTask;
     }
 
     @Override

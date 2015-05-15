@@ -1,17 +1,32 @@
 package hajecs.model.Graph;
 
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.*;
+
 /**
  * Created by lucjan on 07.05.15.
  */
+@RelationshipEntity(type = "RELATED_TO")
 public class RelationShip{
 
+    @GraphId
     private Long id;
 
+    @Fetch @StartNode
     private AbstractNode beginNode;
 
+    @Fetch @EndNode
     private AbstractNode endNode;
 
+    @Transient
     private boolean visited = false; // for DFS
+
+
+//    @Fetch
+//    @RelatedTo(type = "GRAPH_RELATIONSHIP_RELATION", direction = Direction.BOTH)
+//    @Fetch @RelatedToVia(type = "RELATED_TO", direction = Direction.BOTH)
+//    private AbstractGraph graph;
 
     public RelationShip() {
     }

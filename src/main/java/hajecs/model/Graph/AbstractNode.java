@@ -1,18 +1,37 @@
 package hajecs.model.Graph;
 
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.*;
+
 import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
-
+@NodeEntity
 public abstract class AbstractNode {
 
+    @GraphId
     protected Long id;
     protected String name;
-    protected List<AbstractNode> neighbourNodeStorage = new ArrayList<>();
-    protected List<RelationShip> outGoingRelationShipStorage = new ArrayList<RelationShip>();
-    protected List<RelationShip> inCommingRelationShipStorage = new ArrayList<RelationShip>();
+
+    @Transient
+    protected Set<AbstractNode> neighbourNodeStorage = new HashSet<>();
+
+    @Transient
+    protected Set<RelationShip> outGoingRelationShipStorage = new HashSet<>();
+
+    @Transient
+    protected Set<RelationShip> inCommingRelationShipStorage = new HashSet<>();
+
+
+    @Fetch
+    @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
+    protected AbstractGraph graph;
+
+//    @Fetch @RelatedToVia(type = "RELATED_TO")
+//    private RelationShip relationShip;
 
     public AbstractNode() {
     }
@@ -28,18 +47,18 @@ public abstract class AbstractNode {
 
 
 
-    public List<AbstractNode> getNeighbourNodeStorage() {
+    public Set<AbstractNode> getNeighbourNodeStorage() {
         return neighbourNodeStorage;
     }
 
-    public void setNeighbourNodeStorage(List<AbstractNode> neighbourNodeStorage) {
+    public void setNeighbourNodeStorage(Set<AbstractNode> neighbourNodeStorage) {
         this.neighbourNodeStorage = neighbourNodeStorage;
     }
 
-    public List<RelationShip> getInCommingRelationShipStorage() {
+    public Set<RelationShip> getInCommingRelationShipStorage() {
         return inCommingRelationShipStorage;
     }
-    public void setInCommingRelationShipStorage(List<RelationShip> inCommingRelationShipStorage) {
+    public void setInCommingRelationShipStorage(Set<RelationShip> inCommingRelationShipStorage) {
         this.inCommingRelationShipStorage = inCommingRelationShipStorage;
     }
 
@@ -117,6 +136,7 @@ public abstract class AbstractNode {
             System.out.println(relationShip.getBeginNode().getName() + " -> " + relationShip.getEndNode().getName());
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,16 +145,13 @@ public abstract class AbstractNode {
         AbstractNode node = (AbstractNode) o;
 
         if (!name.equals(node.name)) return false;
-        if (!neighbourNodeStorage.equals(node.neighbourNodeStorage)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + neighbourNodeStorage.hashCode();
-        return result;
+        return name.hashCode();
     }
 
     public Long getId() {
@@ -153,11 +170,38 @@ public abstract class AbstractNode {
         this.name = name;
     }
 
-    public List<RelationShip> getOutGoingRelationShipStorage() {
+    public Set<RelationShip> getOutGoingRelationShipStorage() {
         return outGoingRelationShipStorage;
     }
 
-    public void setOutGoingRelationShipStorage(List<RelationShip> outGoingRelationShipStorage) {
+    public RelationShip getOutGoingRelationShipAtPosition(int position) throws Exception {
+
+        if (position >=0 && position<=outGoingRelationShipStorage.size()-1) {
+            int i = 0;
+            for (RelationShip relationShip : outGoingRelationShipStorage)
+                if (i++ == position)
+                    return relationShip;
+            
+        }
+        else
+            throw new Exception("Outgoing RelationShip from " + getName() + " at position "+ position+ " doesn't exists ");
+        return null;
+    }
+
+    public RelationShip getInCommingRelationShipAtPosition(int position) throws Exception {
+
+        if (position >=0 && position<=inCommingRelationShipStorage.size()-1) {
+            int i = 0;
+            for (RelationShip relationShip : inCommingRelationShipStorage)
+                if (i++ == position)
+                    return relationShip;
+        }
+        else
+            throw new Exception("Outgoing RelationShip from " + getName() + " at position "+ position+ " doesn't exists ");
+        return null;
+    }
+
+    public void setOutGoingRelationShipStorage(Set<RelationShip> outGoingRelationShipStorage) {
         this.outGoingRelationShipStorage = outGoingRelationShipStorage;
     }
 }

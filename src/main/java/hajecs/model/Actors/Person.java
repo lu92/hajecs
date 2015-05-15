@@ -1,6 +1,7 @@
 package hajecs.model.Actors;
 
 
+import hajecs.model.Task.AbstractTask;
 import hajecs.model.personalData.Address;
 import hajecs.model.personalData.Personality;
 import hajecs.model.personalData.Role;
@@ -39,6 +40,11 @@ public abstract class Person {
     @Fetch
     @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
     private Set<Role> roleStorage = new HashSet<>();
+
+
+    @Fetch
+    @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
+    private Set<AbstractTask> tasks = new HashSet<>();
 
     public Person() {
     }

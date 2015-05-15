@@ -1,14 +1,13 @@
 package hajecs.model.Task;
 
 import hajecs.model.personalData.Role;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
  */
+
+
 public class DailyTask extends AbstractTask{
 
     public DailyTask() {
@@ -30,24 +29,24 @@ public class DailyTask extends AbstractTask{
         super(name, describe);
     }
 
-    public DailyTask(String name, String describe, List<Role> requirements, String taskName) {
+    public DailyTask(String name, String describe, Set<Role> requirements, String taskName) {
         super(name, describe, requirements);
         singleTaskStorage.add(new SingleTask(taskName));
     }
 
-    public DailyTask(String name, String describe, Date day, List<Role> requirements, String taskName) {
+    public DailyTask(String name, String describe, Date day, Set<Role> requirements, String taskName) {
         super(name, describe, day, day, requirements);
         singleTaskStorage.add(new SingleTask(taskName));
     }
 
-    public DailyTask(Long id, String name, String describe, Date day, List<Role> requirements, String taskName) {
+    public DailyTask(Long id, String name, String describe, Date day, Set<Role> requirements, String taskName) {
         super(id, name, describe, day, day, requirements);
         singleTaskStorage.add(new SingleTask(taskName));
     }
 
 
     public void changeTaskName(String taskName) {
-        singleTaskStorage.get(0).setTask(taskName);
+        singleTaskStorage.iterator().next().setTask(taskName);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class DailyTask extends AbstractTask{
 
     @Override
     public boolean isExecuted() {
-        return singleTaskStorage.get(0).isExecuted();
+        return singleTaskStorage.iterator().next().isExecuted();
     }
 
     @Override
@@ -64,13 +63,13 @@ public class DailyTask extends AbstractTask{
     }
 
     @Override
-    public List<SingleTask> getPerformedTasks() {
-        return isExecuted() ? singleTaskStorage : new ArrayList<SingleTask>();
+    public Set<SingleTask> getPerformedTasks() {
+        return isExecuted() ? singleTaskStorage : new HashSet<>();
     }
 
     @Override
-    public List<SingleTask> getNotPerformedTasks() {
-        return isExecuted() ? new ArrayList<SingleTask>() : singleTaskStorage;
+    public Set<SingleTask> getNotPerformedTasks() {
+        return isExecuted() ? new HashSet<>() : singleTaskStorage;
     }
 
     @Override
@@ -85,13 +84,13 @@ public class DailyTask extends AbstractTask{
 
     @Override
     public void endTask(int id) {
-        singleTaskStorage.get(0).setExecuted(true);
+        singleTaskStorage.iterator().next().setExecuted(true);
         this.setEnd(new Date());
     }
 
     @Override
     public void endTask(String taskName) {
-        singleTaskStorage.get(0).setExecuted(true);
+        singleTaskStorage.iterator().next().setExecuted(true);
         this.setEnd(new Date());
     }
 }

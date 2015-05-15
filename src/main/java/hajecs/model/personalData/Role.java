@@ -27,7 +27,9 @@ public class Role {
     @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
     private Set<Privilege> privilegeStorage = new HashSet<>();
 
-//    private List<AbstractTask> tasks = new ArrayList<>();
+    @Fetch
+    @RelatedTo(type = "ROLE_TASK_RELATION", direction = Direction.BOTH)
+    private Set<AbstractTask> tasks = new HashSet<>();
 
     @Fetch
     @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
@@ -73,9 +75,6 @@ public class Role {
             privilegeStorage.add(privilege);
     }
 
-//    public Privilege getPrivilegeName(int index) {
-//        return privilegeStorage.get(index);
-//    }
 
     //          END OF METHODS
 

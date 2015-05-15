@@ -3,23 +3,34 @@ package hajecs.model.Graph;
 import hajecs.model.Actors.Person;
 import hajecs.model.Actors.Worker;
 import hajecs.model.Task.AbstractTask;
+import org.springframework.data.annotation.Transient;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lucjan on 07.05.15.
  */
 public class MileStone extends AbstractGraph implements IMileStone{
 
+    @Transient
     private Person manager;
+
+    @Transient
     private TaskNode startTaskNode;
+
+    @Transient
     private TaskNode endTaskNode;
 
     private long counter = 0L;  // do numerowania nodow w ktorych sa taski, nazwa noda
 
     public MileStone() {
+    }
+
+    public MileStone(String name) {
+        super(name);
     }
 
     public MileStone(String name, String describe) {
@@ -99,7 +110,7 @@ public class MileStone extends AbstractGraph implements IMileStone{
     }
 
     @Override
-    public List<Person> getResponsibleWorkerForNode(TaskNode node) {
+    public Set<Person> getResponsibleWorkerForNode(TaskNode node) {
         return node.getTask().getWorkerStorage();
     }
 

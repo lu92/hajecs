@@ -1,10 +1,7 @@
 package hajecs.model.Task;
 
 import hajecs.model.personalData.Role;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
@@ -19,7 +16,7 @@ public class HourlyTask extends AbstractTask{
         super(name, describe);
     }
 
-    public HourlyTask(String name, String describe, List<Role> requirements) {
+    public HourlyTask(String name, String describe, Set<Role> requirements) {
         super(name, describe, requirements);
     }
 
@@ -27,11 +24,11 @@ public class HourlyTask extends AbstractTask{
         super(name, describe, day, day);
     }
 
-    public HourlyTask(String name, String describe, Date day, List<Role> requirements) {
+    public HourlyTask(String name, String describe, Date day, Set<Role> requirements) {
         super(name, describe, day, day, requirements);
     }
 
-    public HourlyTask(Long id, String name, String describe, Date day, List<Role> requirements) {
+    public HourlyTask(Long id, String name, String describe, Date day, Set<Role> requirements) {
         super(id, name, describe, day, day, requirements);
     }
 
@@ -52,8 +49,8 @@ public class HourlyTask extends AbstractTask{
     }
 
     @Override
-    public List<SingleTask> getPerformedTasks() {
-        List<SingleTask> executedTasks = new ArrayList<SingleTask>(singleTaskStorage.size());
+    public Set<SingleTask> getPerformedTasks() {
+        Set<SingleTask> executedTasks = new HashSet<>(singleTaskStorage.size());
         for (SingleTask singleTask : singleTaskStorage)
             if (singleTask.isExecuted())
                 executedTasks.add(singleTask);
@@ -61,8 +58,8 @@ public class HourlyTask extends AbstractTask{
     }
 
     @Override
-    public List<SingleTask> getNotPerformedTasks() {
-        List<SingleTask> executedTasks = new ArrayList<SingleTask>(singleTaskStorage.size());
+    public Set<SingleTask> getNotPerformedTasks() {
+        Set<SingleTask> executedTasks = new HashSet<>(singleTaskStorage.size());
         for (SingleTask singleTask : singleTaskStorage)
             if (!singleTask.isExecuted())
                 executedTasks.add(singleTask);
