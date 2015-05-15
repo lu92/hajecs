@@ -1,10 +1,11 @@
 package hajecs.repositories;
 
 import hajecs.model.Actors.Person;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.neo4j.repository.GraphRepository;
 
 /**
- * Created by lucjan on 08.05.15.
+ * Created by lucjan on 14.05.15.
  */
-public interface PersonRepository extends JpaRepository<Person, Long> {
+public interface PersonRepository extends GraphRepository<Person> {
+
 }

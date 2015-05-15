@@ -4,33 +4,41 @@ package hajecs.model.Actors;
 import hajecs.model.personalData.Address;
 import hajecs.model.personalData.Personality;
 import hajecs.model.personalData.Role;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lucjan on 10.03.15.
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NodeEntity
 public abstract class Person {
 
-    @Id @GeneratedValue
-    private Long person_id;
+    @GraphId
+    private Long id;
     private String username;
     private String password;
     private String email;
 
 
-    @OneToOne(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch
+    @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
     private Personality personality;
 
-    @OneToOne(mappedBy = "person", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Fetch
+    @RelatedTo(type = "CONNECTED2", direction = Direction.BOTH)
     private Address address;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Role> roleStorage = new ArrayList<>();
+    @Fetch
+    @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
+    private Set<Role> roleStorage = new HashSet<>();
 
     public Person() {
     }
@@ -42,7 +50,7 @@ public abstract class Person {
         this.email = email;
     }
 
-    public Person(String username, String password, String email, Personality personality, Address address, List<Role> roles) {
+    public Person(String username, String password, String email, Personality personality, Address address, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -51,9 +59,9 @@ public abstract class Person {
         this.roleStorage = roles;
     }
 
-    public Person(Long person_id, String username, String password, String email, Personality personality, Address address,  List<Role> roles) {
+    public Person(Long person_id, String username, String password, String email, Personality personality, Address address,  Set<Role> roles) {
         this(username, password, email, personality, address, roles);
-        this.person_id = person_id;
+        this.id = person_id;
     }
 
 
@@ -77,7 +85,7 @@ public abstract class Person {
         if (address != null ? !address.equals(person.address) : person.address != null) return false;
         if (!email.equals(person.email)) return false;
         if (!password.equals(person.password)) return false;
-        if (person_id != null ? !person_id.equals(person.person_id) : person.person_id != null) return false;
+        if (id != null ? !id.equals(person.id) : person.id != null) return false;
         if (personality != null ? !personality.equals(person.personality) : person.personality != null) return false;
         if (roleStorage != null ? !roleStorage.equals(person.roleStorage) : person.roleStorage != null) return false;
         if (!username.equals(person.username)) return false;
@@ -87,7 +95,7 @@ public abstract class Person {
 
     @Override
     public int hashCode() {
-        int result = person_id != null ? person_id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
         result = 31 * result + username.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + email.hashCode();
@@ -97,12 +105,12 @@ public abstract class Person {
         return result;
     }
 
-    public Long getPerson_id() {
-        return person_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setPerson_id(Long person_id) {
-        this.person_id = person_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -145,18 +153,18 @@ public abstract class Person {
         this.address = address;
     }
 
-    public List<Role> getRoleStorage() {
+    public Set<Role> getRoleStorage() {
         return roleStorage;
     }
 
-    public void setRoleStorage(List<Role> roleStorage) {
+    public void setRoleStorage(Set<Role> roleStorage) {
         this.roleStorage = roleStorage;
     }
 
     @Override
     public String toString() {
         return "Person{" +
-                "person_id=" + person_id +
+                "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +

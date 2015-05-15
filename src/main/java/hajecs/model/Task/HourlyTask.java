@@ -2,7 +2,6 @@ package hajecs.model.Task;
 
 import hajecs.model.personalData.Role;
 
-import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
  * Created by lucjan on 07.05.15.
  */
 
-@Entity
 public class HourlyTask extends AbstractTask{
 
     public HourlyTask() {

@@ -1,17 +1,21 @@
 package hajecs.model.personalData;
 
 import hajecs.model.Actors.Person;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
-import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Created by lucjan on 10.03.15.
  */
-@Entity
+@NodeEntity
 public class Personality {
 
-    @Id @GeneratedValue
+    @GraphId
     private Long personality_id;
     private String name;
     private String lastname;
@@ -19,8 +23,8 @@ public class Personality {
     private String telephoneNumber;
 
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
+    @Fetch
+    @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
     private Person person;
 
     public Personality() {

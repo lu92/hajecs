@@ -52,7 +52,7 @@ public class PersonResource {
 
     public static Person getJavaDeveloperAdamWojcik() {
         PersonBuilder personBuilder = new PersonBuilder("Adam_Wojcik", "Adam_Wojcik", "adam.wojcik@gmail.com", Worker.class);
-        personBuilder.setAddress("Poland", "Warsaw", "30-330 Warsaw");
+        personBuilder.setAddress("Poland", "Warsaw", "30-330");
         personBuilder.setPersonality("Adam", "Wojcik", "20/04/1970", "123456789");
         personBuilder.setRoles(
                 RoleResource.getJAVADeveloper(),

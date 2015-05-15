@@ -1,34 +1,30 @@
 package hajecs.model.personalData;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.neo4j.annotation.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by lucjan on 10.03.15.
  */
-
-@Entity
+@NodeEntity
+@TypeAlias("Privilege")
 public class Privilege {
 
-    @Id @GeneratedValue
-    private Long privilege_id;
-    private String privilege;
+    @GraphId
+    private Long id;
 
-    public List<Role> getRoleStorage() {
-        return roleStorage;
-    }
+    @Indexed(unique = true)
+    private String privilegeName;
 
-    public void setRoleStorage(List<Role> roleStorage) {
-        this.roleStorage = roleStorage;
-    }
-
-    @JsonIgnore
-    @ManyToMany
-    private List<Role> roleStorage = new ArrayList<>();
+    @Fetch
+    @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
+    private Set<Role> roleStorage = new HashSet<>();
 
 
 
@@ -36,13 +32,14 @@ public class Privilege {
     }
 
     public Privilege(Long privilege_id, String privilege) {
-        this.privilege_id = privilege_id;
-        this.privilege = privilege;
+        this.id = privilege_id;
+        this.privilegeName = privilege;
     }
 
     public Privilege(String privilege) {
-        this.privilege = privilege;
+        this.privilegeName = privilege;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -51,41 +48,45 @@ public class Privilege {
 
         Privilege privilege1 = (Privilege) o;
 
-        if (!privilege.equals(privilege1.privilege)) return false;
-        if (privilege_id != null ? !privilege_id.equals(privilege1.privilege_id) : privilege1.privilege_id != null)
-            return false;
+        if (!privilegeName.equals(privilege1.privilegeName)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = privilege_id != null ? privilege_id.hashCode() : 0;
-        result = 31 * result + privilege.hashCode();
-        return result;
+        return privilegeName.hashCode();
     }
 
-    public Long getPrivilege_id() {
-        return privilege_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setPrivilege_id(Long privilege_id) {
-        this.privilege_id = privilege_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getPrivilege() {
-        return privilege;
+    public String getPrivilegeName() {
+        return privilegeName;
     }
 
-    public void setPrivilege(String privilege) {
-        this.privilege = privilege;
+    public void setPrivilegeName(String privilegeName) {
+        this.privilegeName = privilegeName;
+    }
+
+    public Set<Role> getRoleStorage() {
+        return roleStorage;
+    }
+
+    public void setRoleStorage(Set<Role> roleStorage) {
+        this.roleStorage = roleStorage;
     }
 
     @Override
     public String toString() {
         return "Privilege{" +
-                "privilege_id=" + privilege_id +
-                ", privilege='" + privilege + '\'' +
+                "id=" + id +
+                ", privilegeName='" + privilegeName + '\'' +
                 '}';
     }
 }

@@ -4,36 +4,40 @@ package hajecs.model.personalData;
 
 import hajecs.model.Actors.Person;
 import hajecs.model.Task.AbstractTask;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.*;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by lucjan on 10.03.15.
  */
-@Entity
+@NodeEntity
 public class Role {
 
-    @Id @GeneratedValue
-    private Long role_id;
+    @GraphId
+    private Long id;
+
+    @Indexed(unique = true)
     private String roleName;
 
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Privilege> privilegeStorage = new ArrayList<>();
+    @Fetch
+    @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
+    private Set<Privilege> privilegeStorage = new HashSet<>();
 
-    @ManyToMany
-    private List<AbstractTask> tasks = new ArrayList<>();
+//    private List<AbstractTask> tasks = new ArrayList<>();
 
-    @ManyToMany
-    private List<Person> persons = new ArrayList<>();
+    @Fetch
+    @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
+    private Set<Person> persons = new HashSet<>();
 
     public Role() {
     }
 
     public Role(Long role_id, String roleName) {
-        this.role_id = role_id;
+        this.id = role_id;
         this.roleName = roleName;
     }
 
@@ -41,13 +45,13 @@ public class Role {
         this.roleName = roleName;
     }
 
-    public Role(Long role_id, String roleName, List<Privilege> privileges) {
-        this.role_id = role_id;
+    public Role(Long role_id, String roleName, Set<Privilege> privileges) {
+        this.id = role_id;
         this.roleName = roleName;
         this.privilegeStorage = privileges;
     }
 
-    public Role(String roleName, List<Privilege> privileges) {
+    public Role(String roleName, Set<Privilege> privileges) {
         this.roleName = roleName;
         this.privilegeStorage = privileges;
     }
@@ -69,11 +73,12 @@ public class Role {
             privilegeStorage.add(privilege);
     }
 
-    public Privilege getPrivilege(int index) {
-        return privilegeStorage.get(index);
-    }
+//    public Privilege getPrivilegeName(int index) {
+//        return privilegeStorage.get(index);
+//    }
 
     //          END OF METHODS
+
 
     @Override
     public boolean equals(Object o) {
@@ -82,7 +87,6 @@ public class Role {
 
         Role role = (Role) o;
 
-        if (privilegeStorage != null ? !privilegeStorage.equals(role.privilegeStorage) : role.privilegeStorage != null) return false;
         if (!roleName.equals(role.roleName)) return false;
 
         return true;
@@ -90,17 +94,15 @@ public class Role {
 
     @Override
     public int hashCode() {
-        int result = roleName.hashCode();
-        result = 31 * result + (privilegeStorage != null ? privilegeStorage.hashCode() : 0);
-        return result;
+        return roleName.hashCode();
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getRoleName() {
@@ -111,18 +113,18 @@ public class Role {
         this.roleName = roleName;
     }
 
-    public List<Privilege> getPrivilegeStorage() {
+    public Set<Privilege> getPrivilegeStorage() {
         return privilegeStorage;
     }
 
-    public void setPrivilegeStorage(List<Privilege> privilegeStorage) {
+    public void setPrivilegeStorage(Set<Privilege> privilegeStorage) {
         this.privilegeStorage = privilegeStorage;
     }
 
     @Override
     public String toString() {
         return "Role{" +
-                "role_id=" + role_id +
+                "id=" + id +
                 ", roleName='" + roleName + '\'' +
                 ", privilegeStorage=" + privilegeStorage +
                 '}';

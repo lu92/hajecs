@@ -12,11 +12,8 @@ import java.util.List;
 /**
  * Created by lucjan on 07.05.15.
  */
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class AbstractTask {
 
-    @Id @GeneratedValue
     protected Long id;
     protected String name;
     protected String describe;
@@ -24,13 +21,10 @@ public abstract class AbstractTask {
     protected Date end;
     protected Date deadline;
 
-    @Transient
     protected List<Person> workerStorage = new ArrayList<Person>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<Role> roleStorage = new ArrayList<Role>();
 
-    @OneToMany(mappedBy = "abstractTask", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<SingleTask> singleTaskStorage = new ArrayList<SingleTask>();
 
     public AbstractTask() {

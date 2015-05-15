@@ -1,23 +1,27 @@
 package hajecs.model.personalData;
 import hajecs.model.Actors.Person;
+import org.neo4j.graphdb.Direction;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.GraphId;
+import org.springframework.data.neo4j.annotation.NodeEntity;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
-import javax.persistence.*;
 
 /**
  * Created by lucjan on 10.03.15.
  */
-@Entity
+@NodeEntity
 public class Address {
 
-    @Id @GeneratedValue
-    private Long address_id;
+    @GraphId
+    private Long id;
     private String country;
     private String city;
     private String zipCode;
 
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
+    @Fetch
+    @RelatedTo(type = "CONNECTED2", direction = Direction.BOTH)
     private Person person;
 
     public Address() {
@@ -30,7 +34,7 @@ public class Address {
     }
 
     public Address(Long address_id, String country, String city, String zipCode) {
-        this.address_id = address_id;
+        this.id = address_id;
         this.country = country;
         this.city = city;
         this.zipCode = zipCode;
@@ -58,12 +62,12 @@ public class Address {
         return result;
     }
 
-    public Long getAddress_id() {
-        return address_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setAddress_id(Long address_id) {
-        this.address_id = address_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCountry() {
@@ -93,7 +97,7 @@ public class Address {
     @Override
     public String toString() {
         return "Address{" +
-                "address_id=" + address_id +
+                "id=" + id +
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", zipCode='" + zipCode + '\'' +

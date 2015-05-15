@@ -8,18 +8,14 @@ import javax.persistence.*;
  * Created by lucjan on 07.05.15.
  */
 
-@Entity
 public class SingleTask {
 
-    @Id @GeneratedValue
     private Long id;
     private String duration;    //  czas trwania np 13-14 w godzinach
     private String task;
     private boolean executed;
 
 
-    @JsonIgnore
-    @ManyToOne
     private AbstractTask abstractTask;
 
     public SingleTask() {
