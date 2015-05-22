@@ -1,7 +1,6 @@
 package hajecs.model.Graph;
 
 import org.neo4j.graphdb.Direction;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 
 import java.util.*;
@@ -23,10 +22,13 @@ public abstract class AbstractGraph {
 
 //    @Fetch
 //    @RelatedTo(type = "GRAPH_RELATIONSHIP_RELATION", direction = Direction.BOTH)
-    @Transient
+//    @Transient
 //    @RelatedToVia
-//    @Fetch @RelatedToVia(type = "RELATED_TO")
+//    @RelatedToVia(elementClass = RelationShip.class)
+
+    @Fetch @RelatedToVia(type = "RELATED_TO", direction = Direction.BOTH)
     protected Set<RelationShip> graphRelationShipStorage = new HashSet<>();
+    private AbstractNode node;
 
     public AbstractGraph() {
     }
@@ -46,8 +48,10 @@ public abstract class AbstractGraph {
     }
 
     public void addNodes(AbstractNode ... nodes) {
-        for (AbstractNode node : nodes)
+        for (AbstractNode node : nodes) {
+            node.setGraph(this);
             nodeStorage.add(node);
+        }
     }
 
     public void deleteAllRelationShipsOnSelectedNode(String nodeName) {
@@ -58,12 +62,36 @@ public abstract class AbstractGraph {
     }
 
 
+    public void deleteAllRelationShipsOnSelectedNode(long nodeId) {
+        AbstractNode selectedNode = findNode(nodeId);
+        for (String neighbour : selectedNode.getNamesOfNeighbours()) {
+            deleteRelationShipBetweenTwoNodes(selectedNode.getName(), neighbour);
+        }
+    }
+
+    public void deleteRelationShipsBetweenNodes(long fromNodeId, long ... destinations) {
+        AbstractNode fromNode = findNode(fromNodeId);
+        for (AbstractNode destinationNode : findNodes(destinations)) {
+            deleteRelationShipFromBeginNodeToEndNode(fromNode, destinationNode);
+        }
+    }
+
+
     public void removeNodeRegardlessOfRelationShips(String nodeName) {
 
         if (isEveryNodeExists(nodeName)) {
 //            AbstractNode node = findNode(nodeName);
             this.deleteAllRelationShipsOnSelectedNode(nodeName);
             removeNodes(nodeName);
+        } else
+            throw new IllegalArgumentException("Cannot remove doesn't exist node");
+
+    }
+
+    public void removeNodeRegardlessOfRelationShips(long nodeId) {
+        if (isEveryNodeExists(nodeId)) {
+            this.deleteAllRelationShipsOnSelectedNode(nodeId);
+            removeNodes(nodeId);
         } else
             throw new IllegalArgumentException("Cannot remove doesn't exist node");
 
@@ -80,8 +108,39 @@ public abstract class AbstractGraph {
             throw new IllegalArgumentException("Cannot remove doesn't exist node");
     }
 
+    public void removeNodes(long ... nodesId) throws IllegalArgumentException{
+
+        if (isEveryNodeExists(nodesId)) {
+            if (isEveryNodeIsIsolated(nodesId)) {
+                getNodeStorage().removeAll(findNodes(nodesId));
+            } else
+                throw new IllegalArgumentException("Cannot remove unisolated node");
+        } else
+            throw new IllegalArgumentException("Cannot remove doesn't exist node");
+    }
+
     private boolean isEveryNodeExists(String ... nodeNames) {
         return findNodes(nodeNames).size() == nodeNames.length ? true : false;
+    }
+
+    public boolean isEveryNodeExists(long ... nodesId) {
+        return getNodeStorage().containsAll(findNodes(nodesId));
+    }
+
+    public boolean isEveryNodeIsIsolated(long ... nodesId) {
+        for (AbstractNode node : findNodes(nodesId)) {
+            if (!node.isIsolated())
+                return false;
+        }
+        return true;
+    }
+
+    public AbstractNode findNodeById(long id) throws IllegalArgumentException{
+        for (AbstractNode node : getNodeStorage()) {
+           if (node.getId() == id)
+               return node;
+        }
+        throw new IllegalArgumentException("node doesn't exists");
     }
 
     private boolean isEveryNodeIsIsolated(String ... nodeNames) {
@@ -99,10 +158,27 @@ public abstract class AbstractGraph {
         return null;
     }
 
+    public AbstractNode findNode(long nodeId) {
+        for (AbstractNode node : nodeStorage)
+            if (node.getId() == nodeId)
+                return node;
+        return null;
+    }
+
     public List<AbstractNode> findNodes(String ... nodeNames) {
         List<AbstractNode> findNodes = new ArrayList<>();
         for (String s : nodeNames) {
             AbstractNode findedNode = findNode(s);
+            if (findedNode != null)
+                findNodes.add(findedNode);
+        }
+        return findNodes;
+    }
+
+    public Set<AbstractNode> findNodes(long ... nodesId) {
+        Set<AbstractNode> findNodes = new HashSet<>();
+        for (long id : nodesId) {
+            AbstractNode findedNode = findNode(id);
             if (findedNode != null)
                 findNodes.add(findedNode);
         }
@@ -121,6 +197,36 @@ public abstract class AbstractGraph {
             addRelationShips(findNode(fromNodeName), findNode(toNodeNames));
             for (String node : toOtherNodes)
                 addRelationShips(findNode(fromNodeName), findNode(node));
+        }
+    }
+
+    public void addRelationShips(long fromNodeId, long ... toOtherNodesId) {
+
+        AbstractNode fromNode = findNode(fromNodeId);
+        Set<AbstractNode> toNodes = findNodes(toOtherNodesId);
+
+        if (fromNode == null || toNodes == null || toNodes.size() == 0)
+            System.out.println("Cannot find nodes to create relationship");
+        else {
+
+            for (long node : toOtherNodesId)
+                addRelationShips(findNode(fromNodeId), findNode(node));
+        }
+    }
+
+    public void addRelationShips(long fromNodeId, long toNodesId, long ... toOtherNodesId) {
+
+        AbstractNode fromNode = findNode(fromNodeId);
+        node = findNode(toNodesId);
+        AbstractNode toNode = node;
+
+        if (fromNode == null || toNode == null)
+            System.out.println("Cannot find nodes to create relationship");
+        else {
+
+            addRelationShips(findNode(fromNodeId), findNode(toNodesId));
+            for (long node : toOtherNodesId)
+                addRelationShips(findNode(fromNodeId), findNode(node));
         }
     }
 
@@ -151,6 +257,20 @@ public abstract class AbstractGraph {
         }
     }
 
+    public Set<RelationShip> getNodesRelationShip(){
+        Set<RelationShip> result = new HashSet<>();
+        for(AbstractNode node: this.nodeStorage){
+            for(RelationShip relationShip:node.getInCommingRelationShipStorage()){
+                result.add(relationShip);
+            }
+            for (RelationShip relationShip:node.getOutGoingRelationShipStorage()){
+                result.add(relationShip);
+            }
+        }
+
+        return result;
+    }
+
     private List<AbstractNode> getSelectedNodes(String toNode, String[] toOtherNodes) {
         List<AbstractNode> result = new ArrayList<>(1+toOtherNodes.length);
         result.addAll(findNodes(toNode));
@@ -160,6 +280,10 @@ public abstract class AbstractGraph {
 
     public void deleteRelationShipFromBeginNodeToEndNode(String beginNode, String endNode) {
         deleteRelationShipFromBeginNodeToEndNode(findNode(beginNode), findNode(endNode));
+    }
+
+    public void deleteRelationShipFromBeginNodeToEndNode(long beginNodeId, long endNodeId) {
+        deleteRelationShipFromBeginNodeToEndNode(findNode(beginNodeId), findNode(endNodeId));
     }
 
     public void deleteRelationShipFromBeginNodeToEndNode(AbstractNode beginNode, AbstractNode endNode) {
@@ -190,6 +314,10 @@ public abstract class AbstractGraph {
 
     public void deleteRelationShipBetweenTwoNodes(String beginNode, String endNode) {
         deleteRelationShipBetweenTwoNodes(findNode(beginNode), findNode(endNode));
+    }
+
+    public void deleteRelationShipBetweenTwoNodes(long beginNodeId, long endNodeId) {
+        deleteRelationShipBetweenTwoNodes(findNode(beginNodeId), findNode(endNodeId));
     }
 
     public void deleteRelationShipBetweenTwoNodes(AbstractNode beginNode, AbstractNode endNode) {
@@ -296,4 +424,14 @@ public abstract class AbstractGraph {
         this.graphRelationShipStorage = graphRelationShipStorage;
     }
 
+    @Override
+    public String toString() {
+        return "AbstractGraph{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", describe='" + describe + '\'' +
+                ", nodeStorage=" + nodeStorage +
+                ", graphRelationShipStorage=" + graphRelationShipStorage +
+                '}';
+    }
 }

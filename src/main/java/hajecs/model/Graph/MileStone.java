@@ -5,10 +5,7 @@ import hajecs.model.Actors.Worker;
 import hajecs.model.Task.AbstractTask;
 import org.springframework.data.annotation.Transient;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lucjan on 07.05.15.
@@ -98,6 +95,15 @@ public class MileStone extends AbstractGraph implements IMileStone{
         return taskNode.getTask().getNumberOfWorkers();
     }
 
+    @Override
+    public Set<Person> getAllWorkers() {
+        Set<Person> allWorkers = new HashSet<>();
+        for (AbstractNode node : this.getNodeStorage()) {
+            allWorkers.addAll(((TaskNode) node).getTask().getWorkerStorage());
+        }
+        return allWorkers;
+    }
+
 
     @Override
     public Person getManager() {
@@ -120,8 +126,8 @@ public class MileStone extends AbstractGraph implements IMileStone{
     }
 
     @Override
-    public List<AbstractTask> getPerformedTasks() {
-        List<AbstractTask> performedTasks = new ArrayList<>();
+    public Set<AbstractTask> getPerformedTasks() {
+        Set<AbstractTask> performedTasks = new HashSet<>();
         for (AbstractTask task : getAllTasks())
             if (task.isExecuted())
                 performedTasks.add(task);
@@ -137,8 +143,8 @@ public class MileStone extends AbstractGraph implements IMileStone{
     }
 
     @Override
-    public List<AbstractTask> getNotPerformedTasks() {
-        List<AbstractTask> notPerformedTasks = new ArrayList<>();
+    public Set<AbstractTask> getNotPerformedTasks() {
+        Set<AbstractTask> notPerformedTasks = new HashSet<>();
         for (AbstractTask task : getAllTasks())
             if (!task.isExecuted())
                 notPerformedTasks.add(task);
@@ -207,5 +213,24 @@ public class MileStone extends AbstractGraph implements IMileStone{
 
     public void setEndTaskNode(TaskNode endTaskNode) {
         this.endTaskNode = endTaskNode;
+    }
+
+
+    @Override
+    public String toString() {
+        return "AbstractGraph{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", describe='" + describe + '\'' +
+                ", nodeStorage=" + nodeStorage +
+                ", graphRelationShipStorage=" + graphRelationShipStorage +
+                '}'
+        +
+         "MileStone{" +
+                "manager=" + manager +
+                ", startTaskNode=" + startTaskNode +
+                ", endTaskNode=" + endTaskNode +
+                ", counter=" + counter +
+                '}';
     }
 }

@@ -1,10 +1,9 @@
 package IntegratedTests;
 
 import hajecs.Neo4jTestApplication;
-import hajecs.Resource.PersonResource;
-import hajecs.Resource.RoleResource;
+import hajecs.resources.PersonResource;
+import hajecs.resources.RoleResource;
 import hajecs.model.Task.DailyTask;
-import hajecs.model.Task.SingleTask;
 import hajecs.model.personalData.Role;
 import hajecs.repositories.PersonRepository;
 import hajecs.repositories.RoleRepository;
@@ -20,7 +19,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by lucjan on 15.05.15.

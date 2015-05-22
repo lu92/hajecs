@@ -18,12 +18,13 @@ public interface IMileStone {
     int getNumberOfWorkers();
     int getNumberOfWorkersForSelecteNode(String nodeName);
     int getNumberOfWorkersForSelecteNode(TaskNode taskNode);
+    Set<Person> getAllWorkers();
     Person getManager();
     Date getPredictableDeadline();
     Set<Person> getResponsibleWorkerForNode(TaskNode node);
     List<AbstractTask> getTasksForActualWeek();
-    List<AbstractTask> getPerformedTasks();
-    List<AbstractTask> getNotPerformedTasks();
+    Set<AbstractTask> getPerformedTasks();
+    Set<AbstractTask> getNotPerformedTasks();
     int getNumberOfNotPerformedTasks();
     int getNumberOfPerformedTasks();
     void setStartTaskNode(String startTaskNode);

@@ -1,4 +1,4 @@
-package hajecs.Resource;
+package hajecs.resources;
 
 import hajecs.builders.PersonBuilder;
 import hajecs.model.Actors.Manager;

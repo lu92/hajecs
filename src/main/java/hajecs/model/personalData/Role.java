@@ -2,6 +2,7 @@ package hajecs.model.personalData;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hajecs.model.Actors.Person;
 import hajecs.model.Task.AbstractTask;
 import org.neo4j.graphdb.Direction;
@@ -29,10 +30,12 @@ public class Role {
 
     @Fetch
     @RelatedTo(type = "ROLE_TASK_RELATION", direction = Direction.BOTH)
+    @JsonIgnore
     private Set<AbstractTask> tasks = new HashSet<>();
 
     @Fetch
     @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
+    @JsonIgnore
     private Set<Person> persons = new HashSet<>();
 
     public Role() {

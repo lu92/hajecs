@@ -1,6 +1,5 @@
 package hajecs.model.Graph;
 
-import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 
@@ -66,10 +65,18 @@ public class RelationShip{
         return true;
     }
 
+//    @Override
+//    public int hashCode() {
+//        int result = 0;// = id != null ? id.hashCode() : 0;
+//        result = 31 * result + beginNode.hashCode();
+//        result = 31 * result + endNode.hashCode();
+//        return result;
+//    }
+
+
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + beginNode.hashCode();
+        int result = beginNode.hashCode();
         result = 31 * result + endNode.hashCode();
         return result;
     }
@@ -108,5 +115,20 @@ public class RelationShip{
 
     public void show() {
         System.out.println("RelationShip : " + beginNode.getName() + " -> " + endNode.getName());
+    }
+
+    public String getDiscribe() {
+        return "RelationShip : " + beginNode.getName() + " -> " + endNode.getName();
+    }
+
+
+    @Override
+    public String toString() {
+        return "RelationShip{" +
+                "id=" + id +
+                ", beginNode=" + beginNode.getName() +
+                ", endNode=" + endNode.getName() +
+                ", visited=" + visited +
+                '}';
     }
 }

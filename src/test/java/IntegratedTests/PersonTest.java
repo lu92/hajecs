@@ -1,7 +1,7 @@
 package IntegratedTests;
 
 import hajecs.Neo4jTestApplication;
-import hajecs.Resource.PersonResource;
+import hajecs.resources.PersonResource;
 import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.Actors.Worker;
@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class PersonTest {
     @Autowired
     private PersonRepository personRepository;
 
-    @Test
+    @Test @Rollback(true)
     public void personTest() {
         Assert.assertNotNull(personRepository);
 

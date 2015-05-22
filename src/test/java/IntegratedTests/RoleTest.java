@@ -1,7 +1,7 @@
 package IntegratedTests;
 
 import hajecs.Neo4jTestApplication;
-import hajecs.Resource.RoleResource;
+import hajecs.resources.RoleResource;
 import hajecs.model.personalData.Role;
 import hajecs.repositories.PrivilegeRepository;
 import hajecs.repositories.RoleRepository;

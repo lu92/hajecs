@@ -1,6 +1,6 @@
 package JUnitTest;
 
-import hajecs.Resource.PersonResource;
+import hajecs.resources.PersonResource;
 import hajecs.model.Actors.Person;
 import hajecs.model.Actors.Worker;
 import hajecs.model.Graph.MileStone;

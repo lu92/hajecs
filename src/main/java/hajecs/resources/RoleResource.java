@@ -1,4 +1,4 @@
-package hajecs.Resource;
+package hajecs.resources;
 
 import hajecs.model.personalData.Privilege;
 import hajecs.model.personalData.Role;

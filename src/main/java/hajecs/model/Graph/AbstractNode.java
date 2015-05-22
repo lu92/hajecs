@@ -19,10 +19,10 @@ public abstract class AbstractNode {
     @Transient
     protected Set<AbstractNode> neighbourNodeStorage = new HashSet<>();
 
-    @Transient
+    @RelatedToVia(type = "RELATED_TO", direction = Direction.OUTGOING)
     protected Set<RelationShip> outGoingRelationShipStorage = new HashSet<>();
 
-    @Transient
+    @RelatedToVia(type = "RELATED_TO", direction = Direction.INCOMING)
     protected Set<RelationShip> inCommingRelationShipStorage = new HashSet<>();
 
 
@@ -30,8 +30,13 @@ public abstract class AbstractNode {
     @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
     protected AbstractGraph graph;
 
-//    @Fetch @RelatedToVia(type = "RELATED_TO")
-//    private RelationShip relationShip;
+
+
+
+    // for agnieszka
+    private double x;
+    private double y;
+
 
     public AbstractNode() {
     }
@@ -87,6 +92,8 @@ public abstract class AbstractNode {
         }
         return uniqRelationShips.size();
     }
+
+
 
     public void addNeighBourNode(AbstractNode... neighbours) {
         for (AbstractNode node : neighbours)
@@ -203,5 +210,43 @@ public abstract class AbstractNode {
 
     public void setOutGoingRelationShipStorage(Set<RelationShip> outGoingRelationShipStorage) {
         this.outGoingRelationShipStorage = outGoingRelationShipStorage;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public AbstractGraph getGraph() {
+        return graph;
+    }
+
+    public void setGraph(AbstractGraph graph) {
+        this.graph = graph;
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractNode{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", neighbourNodeStorage=" + neighbourNodeStorage +
+                ", outGoingRelationShipStorage=" + outGoingRelationShipStorage +
+                ", inCommingRelationShipStorage=" + inCommingRelationShipStorage +
+                ", graph=" + graph.getName() +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

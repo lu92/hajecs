@@ -1,6 +1,7 @@
 package hajecs.model.Actors;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hajecs.model.Task.AbstractTask;
 import hajecs.model.personalData.Address;
 import hajecs.model.personalData.Personality;
@@ -13,7 +14,6 @@ import org.springframework.data.neo4j.annotation.RelatedTo;
 
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +44,7 @@ public abstract class Person {
 
     @Fetch
     @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
+    @JsonIgnore
     private Set<AbstractTask> tasks = new HashSet<>();
 
     public Person() {
@@ -75,10 +76,6 @@ public abstract class Person {
         for (Role role : roles)
             roleStorage.add(role);
     }
-
-//    public enum PersonType {
-//        CLIENT, CONSULTANT, MANAGER, STUDENT, WORKER;
-//    }
 
 
     @Override

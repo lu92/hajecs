@@ -1,5 +1,6 @@
 package hajecs.model.personalData;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hajecs.model.Actors.Person;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.TypeAlias;
@@ -24,6 +25,7 @@ public class Personality {
 
     @Fetch
     @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
+    @JsonIgnore
     private Person person;
 
     public Personality() {

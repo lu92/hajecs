@@ -7,4 +7,5 @@ import org.springframework.data.neo4j.repository.GraphRepository;
  * Created by lucjan on 15.05.15.
  */
 public interface TaskRepository extends GraphRepository<AbstractTask> {
+    AbstractTask findByName(String name);
 }
