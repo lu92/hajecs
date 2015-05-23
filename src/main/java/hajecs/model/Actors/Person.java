@@ -29,22 +29,18 @@ public abstract class Person {
     private String email;
 
 
-    @Fetch
-    @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
+    @Fetch @RelatedTo(type = "CONNECTED", direction = Direction.BOTH)
     private Personality personality;
 
-    @Fetch
-    @RelatedTo(type = "CONNECTED2", direction = Direction.BOTH)
+    @Fetch @RelatedTo(type = "CONNECTED2", direction = Direction.BOTH)
     private Address address;
 
-    @Fetch
-    @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
+    @Fetch @RelatedTo(type = "CONNECTED3", direction = Direction.BOTH)
     private Set<Role> roleStorage = new HashSet<>();
 
 
-    @Fetch
-    @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
     @JsonIgnore
+    @Fetch @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
     private Set<AbstractTask> tasks = new HashSet<>();
 
     public Person() {

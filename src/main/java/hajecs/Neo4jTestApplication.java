@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.neo4j.graphdb.Transaction;
 import org.springframework.data.neo4j.core.GraphDatabase;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @SpringBootApplication
@@ -21,15 +22,17 @@ public class Neo4jTestApplication implements CommandLineRunner{
     @Autowired
     GraphDatabase graphDatabase;
 
+    @Transactional
     public static void main(String[] args) throws IOException {
 
         SpringApplication.run(Neo4jTestApplication.class, args);
-        System.out.println("Hello world 2");
+        System.out.println("Hello world");
     }
 
 
     @Override
     public void run(String... strings) throws Exception {
+        /*
         Person greg = new Person("Greg");
         Person roy = new Person("Roy");
         Person craig = new Person("Craig");
@@ -75,6 +78,6 @@ public class Neo4jTestApplication implements CommandLineRunner{
         } finally {
             tx.close();
         }
-
+*/
     }
 }

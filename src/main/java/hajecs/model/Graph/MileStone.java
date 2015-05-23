@@ -1,9 +1,14 @@
 package hajecs.model.Graph;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.Actors.Worker;
 import hajecs.model.Task.AbstractTask;
+import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.neo4j.annotation.Fetch;
+import org.springframework.data.neo4j.annotation.RelatedTo;
 
 import java.util.*;
 
@@ -12,15 +17,19 @@ import java.util.*;
  */
 public class MileStone extends AbstractGraph implements IMileStone{
 
-    @Transient
-    private Person manager;
+    @JsonIgnore
+    @Fetch @RelatedTo(type = "MANAGER_MILESTONE", direction = Direction.BOTH)
+    private Manager manager;
 
-    @Transient
+    @JsonIgnore
+    @Fetch @RelatedTo(type="START_TASK_NODE", direction= Direction.OUTGOING)
     private TaskNode startTaskNode;
 
-    @Transient
+    @JsonIgnore
+    @Fetch @RelatedTo(type="END_TASK_NODE", direction= Direction.OUTGOING)
     private TaskNode endTaskNode;
 
+    @JsonIgnore
     private long counter = 0L;  // do numerowania nodow w ktorych sa taski, nazwa noda
 
     public MileStone() {
@@ -38,16 +47,16 @@ public class MileStone extends AbstractGraph implements IMileStone{
         super(id, name, describe);
     }
 
-    public MileStone(Person manager) {
+    public MileStone(Manager manager) {
         this.manager = manager;
     }
 
-    public MileStone(String name, String describe, Person manager) {
+    public MileStone(String name, String describe, Manager manager) {
         super(name, describe);
         this.manager = manager;
     }
 
-    public MileStone(Long id, String name, String describe, Person manager) {
+    public MileStone(Long id, String name, String describe, Manager manager) {
         super(id, name, describe);
         this.manager = manager;
     }
@@ -106,7 +115,7 @@ public class MileStone extends AbstractGraph implements IMileStone{
 
 
     @Override
-    public Person getManager() {
+    public Manager getManager() {
         return manager;
     }
 
@@ -195,7 +204,7 @@ public class MileStone extends AbstractGraph implements IMileStone{
 
 //          SETTERS AND GETTERS
 
-    public void setManager(Person manager) {
+    public void setManager(Manager manager) {
         this.manager = manager;
     }
 
@@ -205,6 +214,10 @@ public class MileStone extends AbstractGraph implements IMileStone{
 
     public void setStartTaskNode(TaskNode startTaskNode) {
         this.startTaskNode = startTaskNode;
+    }
+
+    public void setStartTaskNode(long nodeId) {
+        this.startTaskNode = (TaskNode) findNodeById(nodeId);
     }
 
     public TaskNode getEndTaskNode() {

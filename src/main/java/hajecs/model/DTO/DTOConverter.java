@@ -1,6 +1,7 @@
 package hajecs.model.DTO;
 
 import hajecs.model.Graph.AbstractNode;
+import hajecs.model.Graph.MileStone;
 import hajecs.model.Graph.TaskNode;
 import hajecs.model.Task.*;
 
@@ -20,6 +21,10 @@ public class DTOConverter {
     public static SingleTask toSingleTask(SingleTaskDTO singleTaskDTO) {
         return new SingleTask(singleTaskDTO.getDuration(),
                 singleTaskDTO.getTask());
+    }
+
+    public static MileStone toMileStone(MileStoneDTO mileStoneDTO) {
+        return new MileStone(mileStoneDTO.getName(), mileStoneDTO.getDescribe());
     }
 
     public static AbstractTask toTask(TaskDTO taskDTO) {
@@ -55,10 +60,6 @@ public class DTOConverter {
                 task.setSingleTaskStorage(singleTaskSet2);
                 break;
         }
-
         return task;
-
     }
-
-
 }

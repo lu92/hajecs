@@ -1,5 +1,6 @@
 package hajecs.services;
 
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.DTOConverter;
 import hajecs.model.DTO.NodeDTO;
@@ -9,12 +10,15 @@ import hajecs.model.Graph.MileStone;
 import hajecs.model.Graph.TaskNode;
 import hajecs.model.Task.AbstractTask;
 import hajecs.repositories.DBGraphRepository;
+import hajecs.repositories.DBNodeRepository;
+import hajecs.repositories.PersonRepository;
 import hajecs.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Created by lucjan on 21.05.15.
@@ -23,11 +27,20 @@ import java.util.Set;
 @Service
 public class MileStoneServiceImpl implements MileStoneService {
 
+
+    private Logger logger = Logger.getLogger(String.valueOf(this));
+
     @Autowired
     private DBGraphRepository dbGraphRepository;
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private DBNodeRepository dbNodeRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
 
 
     @Override
@@ -79,11 +92,19 @@ public class MileStoneServiceImpl implements MileStoneService {
     }
 
 
-    @Override
-    public void removeNodes(long milestoneId, long... nodesId) {
+    @Override // przetestowac
+    public void deleteNodes(long milestoneId, long... nodesId) {
         MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        for (AbstractNode node : mileStone.findNodes(nodesId)) {
+            dbNodeRepository.delete(node);
+        }
         mileStone.removeNodes(nodesId);
         dbGraphRepository.save(mileStone);
+    }
+
+    @Override
+    public void deleteMileStone(long milestoneId) {
+        dbGraphRepository.delete(milestoneId);
     }
 
 
@@ -110,7 +131,7 @@ public class MileStoneServiceImpl implements MileStoneService {
     }
 
     @Override   // zrobic testy
-    public void removeTask(long milestoneId, long nodeId) {
+    public void deleteTask(long milestoneId, long nodeId) {
         MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
         taskRepository.delete(((TaskNode) mileStone.findNode(nodeId)).getTask());
         ((TaskNode) mileStone.findNode(nodeId)).setTask(null);  // usuwamy referencje
@@ -121,6 +142,22 @@ public class MileStoneServiceImpl implements MileStoneService {
     public long saveOrUpdateMileStone(MileStone mileStone) {
         dbGraphRepository.save(mileStone);
         return dbGraphRepository.findByName(mileStone.getName()).getId();
+    }
+
+    @Override
+    public void setStartTaskNode(long milestoneId, long nodeId) {
+        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        TaskNode startTaskNode = (TaskNode) mileStone.findNode(nodeId);
+        mileStone.setStartTaskNode(startTaskNode);
+        dbGraphRepository.save(mileStone);
+    }
+
+    @Override
+    public void setEndTaskNode(long milestoneId, long nodeId) {
+        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        TaskNode endTaskNode = (TaskNode) mileStone.findNode(nodeId);
+        mileStone.setEndTaskNode(endTaskNode);
+        dbGraphRepository.save(mileStone);
     }
 
     @Override
@@ -147,8 +184,43 @@ public class MileStoneServiceImpl implements MileStoneService {
     }
 
     @Override
-    public Person getManager(long milestoneId) {
+    public void setManager(long milestoneId, long managerId) {
+        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        mileStone.setManager((Manager) personRepository.findOne(managerId));
+        dbGraphRepository.save(mileStone);
+    }
+
+    @Override
+    public Manager getManager(long milestoneId) {
         MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
         return mileStone.getManager();
     }
+
+//    @Override
+//    public void addPersonToTask(long milestoneId, long taskId, long ... personsId) {
+//        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+//        Person person = personRepository.findOne(personId);
+//        for (AbstractNode node : mileStone.getNodeStorage()) {
+//            TaskNode taskNode = (TaskNode) node;
+//            if (taskNode.getTask().getId() == taskId ) {
+//                taskNode.getTask().addWorkers(person);
+//            }
+//        }
+//    }
+
+    @Override
+    public void addPersonToTask(long milestoneId, long taskId, long ... personsId) {
+        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        for (long personId : personsId) {
+            Person person = personRepository.findOne(personId);
+            for (AbstractNode node : mileStone.getNodeStorage()) {
+                TaskNode taskNode = (TaskNode) node;
+                if (taskNode.getTask().getId() == taskId) {
+                    taskNode.getTask().addWorkers(person);
+                }
+            }
+        }
+    }
+
+
 }

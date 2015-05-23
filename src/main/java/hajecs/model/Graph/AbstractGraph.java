@@ -1,5 +1,6 @@
 package hajecs.model.Graph;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 
@@ -16,19 +17,14 @@ public abstract class AbstractGraph {
     protected String name;
     protected String describe;
 
-    @Fetch
-    @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
+    @JsonIgnore
+    @Fetch @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
     protected Set<AbstractNode> nodeStorage = new HashSet<>();
 
-//    @Fetch
-//    @RelatedTo(type = "GRAPH_RELATIONSHIP_RELATION", direction = Direction.BOTH)
-//    @Transient
-//    @RelatedToVia
-//    @RelatedToVia(elementClass = RelationShip.class)
 
+    @JsonIgnore
     @Fetch @RelatedToVia(type = "RELATED_TO", direction = Direction.BOTH)
     protected Set<RelationShip> graphRelationShipStorage = new HashSet<>();
-    private AbstractNode node;
 
     public AbstractGraph() {
     }
@@ -217,7 +213,7 @@ public abstract class AbstractGraph {
     public void addRelationShips(long fromNodeId, long toNodesId, long ... toOtherNodesId) {
 
         AbstractNode fromNode = findNode(fromNodeId);
-        node = findNode(toNodesId);
+        AbstractNode node = findNode(toNodesId);
         AbstractNode toNode = node;
 
         if (fromNode == null || toNode == null)
@@ -225,8 +221,8 @@ public abstract class AbstractGraph {
         else {
 
             addRelationShips(findNode(fromNodeId), findNode(toNodesId));
-            for (long node : toOtherNodesId)
-                addRelationShips(findNode(fromNodeId), findNode(node));
+            for (long nodeId : toOtherNodesId)
+                addRelationShips(findNode(fromNodeId), findNode(nodeId));
         }
     }
 

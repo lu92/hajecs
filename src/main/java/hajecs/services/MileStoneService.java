@@ -1,5 +1,6 @@
 package hajecs.services;
 
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.NodeDTO;
 import hajecs.model.DTO.TaskDTO;
@@ -25,15 +26,20 @@ public interface MileStoneService {
     Set<TaskNode> findNodes(long mileStoneId, long ... nodesId);
 
 
-    void removeNodes(long milestoneId, long ... nodesId);
+    void deleteNodes(long milestoneId, long... nodesId);
+    void deleteMileStone(long milestoneId);
 
     void addRelationShipBetweenTaskNodes(long mileStoneId, long fromTaskNodeId, long ... destinationTaskNodesId);
     void deleteRelationShipBetweenTaskNodes(long milestoneId, long fromTaskNodeId, long ... destinationTaskNodesId);
 
     void addTask(long milestoneId, long nodeId, TaskDTO taskDTO);
-    void removeTask(long milestoneId, long nodeId);
+    void deleteTask(long milestoneId, long nodeId);
 
     long saveOrUpdateMileStone(MileStone mileStone);
+
+    void setStartTaskNode(long milestoneId, long nodeId);
+    void setEndTaskNode(long milestoneId, long nodeId);
+
 
 
     boolean isTaskExecuted(long taskId);
@@ -41,5 +47,10 @@ public interface MileStoneService {
     Set<AbstractTask> getNotExecutedTasks(long milestoneId);
 
     Set<Person> getAllWorkers(long milestoneId);
-    Person getManager(long milestoneId);
+
+    void setManager(long milestoneId, long managerId);
+    Manager getManager(long milestoneId);
+
+    public void addPersonToTask(long milestoneId, long taskId, long ... personsId);
+
 }

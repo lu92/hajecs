@@ -16,7 +16,7 @@ public abstract class AbstractNode {
     protected Long id;
     protected String name;
 
-    @Transient
+    @Fetch @RelatedTo(type="NEIGHBOUR_NODE", direction=Direction.BOTH)
     protected Set<AbstractNode> neighbourNodeStorage = new HashSet<>();
 
     @RelatedToVia(type = "RELATED_TO", direction = Direction.OUTGOING)
@@ -80,24 +80,31 @@ public abstract class AbstractNode {
 
 
     public int calculateNumberOfNeighBourNodes() {
-        List<RelationShip> allRelationShips = new ArrayList<>();
-        allRelationShips.addAll(getInCommingRelationShipStorage());
-        allRelationShips.addAll(getOutGoingRelationShipStorage());
+        if (getInCommingRelationShipStorage().isEmpty() && getOutGoingRelationShipStorage().isEmpty())
+            return 0;
+        else {
+            List<RelationShip> allRelationShips = new ArrayList<>();
+            allRelationShips.addAll(getInCommingRelationShipStorage());
+            allRelationShips.addAll(getOutGoingRelationShipStorage());
 
-        List<RelationShip> uniqRelationShips = new ArrayList<>();
+            List<RelationShip> uniqRelationShips = new ArrayList<>();
 
-        for (RelationShip relationShip : allRelationShips) {
-            if (!uniqRelationShips.contains(relationShip) && !uniqRelationShips.contains(RelationShip.getReversedRelationShip(relationShip)) )
-                uniqRelationShips.add(relationShip);
+            for (RelationShip relationShip : allRelationShips) {
+                if (!uniqRelationShips.contains(relationShip) && !uniqRelationShips.contains(RelationShip.getReversedRelationShip(relationShip)))
+                    uniqRelationShips.add(relationShip);
+            }
+            return uniqRelationShips.size();
         }
-        return uniqRelationShips.size();
     }
 
 
 
-    public void addNeighBourNode(AbstractNode... neighbours) {
+    public void addNeighBourNode(AbstractNode... neighbours) throws IllegalArgumentException {
         for (AbstractNode node : neighbours)
-            this.neighbourNodeStorage.add(node);
+            if (node == null)
+                throw new IllegalArgumentException("cannot add empty [null] node as neighbour");
+            else
+                this.neighbourNodeStorage.add(node);
     }
 
     public void addIncommingRelationShip(RelationShip relationShip) {
@@ -204,7 +211,7 @@ public abstract class AbstractNode {
                     return relationShip;
         }
         else
-            throw new Exception("Outgoing RelationShip from " + getName() + " at position "+ position+ " doesn't exists ");
+            throw new Exception("Incoming RelationShip from " + getName() + " at position "+ position+ " doesn't exists ");
         return null;
     }
 

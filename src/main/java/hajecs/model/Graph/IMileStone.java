@@ -1,11 +1,9 @@
 package hajecs.model.Graph;
 
-
-
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.Actors.Worker;
 import hajecs.model.Task.AbstractTask;
-import org.springframework.web.servlet.tags.form.SelectTag;
 
 import java.util.Date;
 import java.util.List;
@@ -19,7 +17,8 @@ public interface IMileStone {
     int getNumberOfWorkersForSelecteNode(String nodeName);
     int getNumberOfWorkersForSelecteNode(TaskNode taskNode);
     Set<Person> getAllWorkers();
-    Person getManager();
+    void setManager(Manager manager);
+    Manager getManager();
     Date getPredictableDeadline();
     Set<Person> getResponsibleWorkerForNode(TaskNode node);
     List<AbstractTask> getTasksForActualWeek();
