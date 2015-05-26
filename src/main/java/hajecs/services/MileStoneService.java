@@ -2,11 +2,14 @@ package hajecs.services;
 
 import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
-import hajecs.model.DTO.NodeDTO;
-import hajecs.model.DTO.TaskDTO;
+import hajecs.model.DTO.*;
+import hajecs.model.Graph.AbstractNode;
 import hajecs.model.Graph.MileStone;
+import hajecs.model.Graph.RelationShip;
 import hajecs.model.Graph.TaskNode;
 import hajecs.model.Task.AbstractTask;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Set;
 
@@ -14,43 +17,30 @@ import java.util.Set;
  * Created by lucjan on 21.05.15.
  */
 public interface MileStoneService {
-    MileStone findMileStoneById(long id);
-    MileStone findMileStoneByName(String name);
-
-    void addNodes(long milestoneId, NodeDTO nodeDTO);
-    void addNodes(String milestoneName, NodeDTO nodeDTO);
-
-    MileStone getMileStone(long milestoneId);
-
-    Set<TaskNode> getTaskNodeStorage(long milestoneId);
-    Set<TaskNode> findNodes(long mileStoneId, long ... nodesId);
-
-
-    void deleteNodes(long milestoneId, long... nodesId);
+    long createMileStone(MileStone mileStone);
     void deleteMileStone(long milestoneId);
+    MileStone getMileStone(long milestoneId);
+    MileStone findMileStoneByName(String milestoneName);
+    Set<MileStone> getAllMileStones();
+    Set<MileStoneDTOInfo> getAllMileStoneDtoInfos();
 
-    void addRelationShipBetweenTaskNodes(long mileStoneId, long fromTaskNodeId, long ... destinationTaskNodesId);
-    void deleteRelationShipBetweenTaskNodes(long milestoneId, long fromTaskNodeId, long ... destinationTaskNodesId);
+    boolean addTaskNodeToMileStone(long milestoneId, long nodeId) throws IllegalArgumentException;
+    void removeTaskNodeFromMileStone(long milestoneId, long nodeId) throws IllegalArgumentException;
+    Set<TaskNodeDTOInfo> getAllTaskNode(long milestoneId);
 
-    void addTask(long milestoneId, long nodeId, TaskDTO taskDTO);
-    void deleteTask(long milestoneId, long nodeId);
+    void addRelationShipBetweenTaskNodes(long mileStoneId, long beginTaskNodeId, long endTaskNodeId) throws IllegalArgumentException;
+//    void deleteRelationShipBetweenTaskNodes(long milestoneId, long relationShipId);
 
-    long saveOrUpdateMileStone(MileStone mileStone);
+    Set<RelationShip> getAllRelationShips(long milestoneId);
+    Set<RelationShipDTOInfo> getAllRelationShipDtoInfos(long milestoneId);
+    void setStartTaskNode(long milestoneId, long nodeId) throws IllegalArgumentException;
+    void setEndTaskNode(long milestoneId, long nodeId) throws IllegalArgumentException;
 
-    void setStartTaskNode(long milestoneId, long nodeId);
-    void setEndTaskNode(long milestoneId, long nodeId);
+    Set<TaskDTOInfo> getExecutedTasks(long milestoneId);
+    Set<TaskDTOInfo> getNotExecutedTasks(long milestoneId);
 
+    Set<PersonDTOInfo> getAllWorkers(long milestoneId);
 
-
-    boolean isTaskExecuted(long taskId);
-    Set<AbstractTask> getExecutedTasks(long milestoneId);
-    Set<AbstractTask> getNotExecutedTasks(long milestoneId);
-
-    Set<Person> getAllWorkers(long milestoneId);
-
-    void setManager(long milestoneId, long managerId);
-    Manager getManager(long milestoneId);
-
-    public void addPersonToTask(long milestoneId, long taskId, long ... personsId);
-
+    boolean setManager(long milestoneId, long managerId) throws IllegalArgumentException;
+    PersonDTOInfo getManager(long milestoneId);
 }

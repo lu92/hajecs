@@ -1,20 +1,15 @@
 package hajecs.services;
 
-import hajecs.model.Actors.Manager;
-import hajecs.model.Actors.Person;
-import hajecs.model.DTO.DTOConverter;
-import hajecs.model.DTO.NodeDTO;
-import hajecs.model.DTO.TaskDTO;
-import hajecs.model.Graph.AbstractNode;
+import hajecs.model.DTO.*;
+import hajecs.model.Graph.AbstractGraph;
 import hajecs.model.Graph.MileStone;
+import hajecs.model.Graph.RelationShip;
 import hajecs.model.Graph.TaskNode;
-import hajecs.model.Task.AbstractTask;
-import hajecs.repositories.DBGraphRepository;
-import hajecs.repositories.DBNodeRepository;
-import hajecs.repositories.PersonRepository;
-import hajecs.repositories.TaskRepository;
+import hajecs.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import scala.collection.parallel.ParIterableLike;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,9 +20,8 @@ import java.util.logging.Logger;
  */
 
 @Service
+@Transactional
 public class MileStoneServiceImpl implements MileStoneService {
-
-
     private Logger logger = Logger.getLogger(String.valueOf(this));
 
     @Autowired
@@ -37,6 +31,9 @@ public class MileStoneServiceImpl implements MileStoneService {
     private TaskRepository taskRepository;
 
     @Autowired
+    private DBTaskNodeRepository dbTaskNodeRepository;
+
+    @Autowired
     private DBNodeRepository dbNodeRepository;
 
     @Autowired
@@ -44,27 +41,13 @@ public class MileStoneServiceImpl implements MileStoneService {
 
 
     @Override
-    public MileStone findMileStoneById(long id) {
-        return (MileStone) dbGraphRepository.findOne(id);
+    public long createMileStone(MileStone mileStone) {
+        return dbGraphRepository.save(mileStone).getId();
     }
 
     @Override
-    public MileStone findMileStoneByName(String name) {
-        return (MileStone) dbGraphRepository.findByName(name);
-    }
-
-    @Override
-    public void addNodes(long milestoneId, NodeDTO nodeDTO) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        mileStone.addNodes(DTOConverter.toNode(nodeDTO));
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public void addNodes(String milestoneName, NodeDTO nodeDTO) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findByName(milestoneName);
-        mileStone.addNodes(DTOConverter.toNode(nodeDTO));
-        dbGraphRepository.save(mileStone);
+    public void deleteMileStone(long milestoneId) {
+        dbGraphRepository.delete(milestoneId);
     }
 
     @Override
@@ -73,153 +56,134 @@ public class MileStoneServiceImpl implements MileStoneService {
     }
 
     @Override
-    public Set<TaskNode> getTaskNodeStorage(long milestoneId) {
-        Set<TaskNode> taskNodes = new HashSet<>();
-        for (AbstractNode node : ((MileStone) dbGraphRepository.findOne(milestoneId)).getNodeStorage()) {
-            taskNodes.add((TaskNode) node);
+    public MileStone findMileStoneByName(String milestoneName) {
+        return (MileStone) dbGraphRepository.findByName(milestoneName);
+    }
+
+    @Override
+    public Set<MileStone> getAllMileStones() {
+        Set<MileStone> mileStoneSet = new HashSet<>();
+        for (AbstractGraph mileStone : dbGraphRepository.findAll())
+            mileStoneSet.add((MileStone) mileStone);
+        return mileStoneSet;
+    }
+
+    @Override
+    public Set<MileStoneDTOInfo> getAllMileStoneDtoInfos() {
+        Set<MileStoneDTOInfo> mileStoneDTOInfos = new HashSet<>();
+        for (MileStone mileStone : getAllMileStones())
+            mileStoneDTOInfos.add(DTOConverter.toMileStoneDTOInfo(mileStone));
+        return mileStoneDTOInfos;
+    }
+
+    @Override
+    public boolean addTaskNodeToMileStone(long milestoneId, long nodeId) throws IllegalArgumentException{
+
+        MileStone mileStone = null;
+        TaskNode taskNode = null;
+
+        try {
+            mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("MileStone with id = " + milestoneId + " doesn't exists");
         }
-        return taskNodes;
-    }
 
-    @Override
-    public Set<TaskNode> findNodes(long mileStoneId, long... nodesId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(mileStoneId);
-        Set<TaskNode> taskNodes = new HashSet<>();
-        for (AbstractNode abstractNode : mileStone.findNodes(nodesId)) {
-            taskNodes.add((TaskNode) abstractNode);
+        try {
+            taskNode = dbTaskNodeRepository.findOne(nodeId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("TaskNode with id = " + nodeId + " doesn't exists");
         }
-        return taskNodes;
+
+        mileStone.addNodes(taskNode);
+        dbGraphRepository.save(mileStone);
+        return true;
     }
 
+    @Override
+    public void removeTaskNodeFromMileStone(long milestoneId, long nodeId) throws IllegalArgumentException {
 
-    @Override // przetestowac
-    public void deleteNodes(long milestoneId, long... nodesId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        for (AbstractNode node : mileStone.findNodes(nodesId)) {
-            dbNodeRepository.delete(node);
+    }
+
+    @Override
+    public Set<TaskNodeDTOInfo> getAllTaskNode(long milestoneId) {
+        return null;
+    }
+
+    @Override
+    public void addRelationShipBetweenTaskNodes(long mileStoneId, long beginTaskNodeId, long endTaskNodeId) throws IllegalArgumentException {
+        MileStone mileStone = null;
+        TaskNode beginTaskNode = null;
+        TaskNode endTaskNode = null;
+
+        try {
+            mileStone = (MileStone) dbGraphRepository.findOne(mileStoneId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("mileStone with id " + mileStone + " doesn't exists");
         }
-        mileStone.removeNodes(nodesId);
-        dbGraphRepository.save(mileStone);
-    }
 
-    @Override
-    public void deleteMileStone(long milestoneId) {
-        dbGraphRepository.delete(milestoneId);
-    }
-
-
-    @Override
-    public void addRelationShipBetweenTaskNodes(long mileStoneId, long fromTaskNodeId, long... destinationTaskNodesId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(mileStoneId);
-        mileStone.addRelationShips(fromTaskNodeId, destinationTaskNodesId);
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public void deleteRelationShipBetweenTaskNodes(long milestoneId, long fromTaskNodeId, long... destinationTaskNodesId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        mileStone.deleteRelationShipsBetweenNodes(fromTaskNodeId, destinationTaskNodesId);
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public void addTask(long milestoneId, long nodeId, TaskDTO taskDTO) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        ((TaskNode) mileStone.findNodeById(nodeId)).setTask(DTOConverter.toTask(taskDTO));
-        dbGraphRepository.save(mileStone);
-
-    }
-
-    @Override   // zrobic testy
-    public void deleteTask(long milestoneId, long nodeId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        taskRepository.delete(((TaskNode) mileStone.findNode(nodeId)).getTask());
-        ((TaskNode) mileStone.findNode(nodeId)).setTask(null);  // usuwamy referencje
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public long saveOrUpdateMileStone(MileStone mileStone) {
-        dbGraphRepository.save(mileStone);
-        return dbGraphRepository.findByName(mileStone.getName()).getId();
-    }
-
-    @Override
-    public void setStartTaskNode(long milestoneId, long nodeId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        TaskNode startTaskNode = (TaskNode) mileStone.findNode(nodeId);
-        mileStone.setStartTaskNode(startTaskNode);
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public void setEndTaskNode(long milestoneId, long nodeId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        TaskNode endTaskNode = (TaskNode) mileStone.findNode(nodeId);
-        mileStone.setEndTaskNode(endTaskNode);
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public boolean isTaskExecuted(long taskId) {
-        return taskRepository.findOne(taskId).isExecuted();
-    }
-
-    @Override
-    public Set<AbstractTask> getExecutedTasks(long milestoneId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        return mileStone.getPerformedTasks();
-    }
-
-    @Override
-    public Set<AbstractTask> getNotExecutedTasks(long milestoneId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        return mileStone.getPerformedTasks();
-    }
-
-    @Override
-    public Set<Person> getAllWorkers(long milestoneId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        return mileStone.getAllWorkers();
-    }
-
-    @Override
-    public void setManager(long milestoneId, long managerId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        mileStone.setManager((Manager) personRepository.findOne(managerId));
-        dbGraphRepository.save(mileStone);
-    }
-
-    @Override
-    public Manager getManager(long milestoneId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        return mileStone.getManager();
-    }
-
-//    @Override
-//    public void addPersonToTask(long milestoneId, long taskId, long ... personsId) {
-//        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-//        Person person = personRepository.findOne(personId);
-//        for (AbstractNode node : mileStone.getNodeStorage()) {
-//            TaskNode taskNode = (TaskNode) node;
-//            if (taskNode.getTask().getId() == taskId ) {
-//                taskNode.getTask().addWorkers(person);
-//            }
-//        }
-//    }
-
-    @Override
-    public void addPersonToTask(long milestoneId, long taskId, long ... personsId) {
-        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
-        for (long personId : personsId) {
-            Person person = personRepository.findOne(personId);
-            for (AbstractNode node : mileStone.getNodeStorage()) {
-                TaskNode taskNode = (TaskNode) node;
-                if (taskNode.getTask().getId() == taskId) {
-                    taskNode.getTask().addWorkers(person);
-                }
-            }
+        try {
+            beginTaskNode = dbTaskNodeRepository.findOne(beginTaskNodeId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("tasknode with id " + beginTaskNodeId + " doesn't exists");
         }
+        
+        try {
+            endTaskNode = dbTaskNodeRepository.findOne(endTaskNodeId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("tasknode with id " + endTaskNodeId + " doesn't exists");
+        }
+
+        mileStone.addRelationShips(beginTaskNode, endTaskNode);
+        dbGraphRepository.save(mileStone);
+    }
+
+    @Override
+    public Set<RelationShip> getAllRelationShips(long milestoneId) {
+        MileStone mileStone = (MileStone) dbGraphRepository.findOne(milestoneId);
+        return mileStone.getNodesRelationShip();
+    }
+
+    @Override
+    public Set<RelationShipDTOInfo> getAllRelationShipDtoInfos(long milestoneId) {
+        Set<RelationShipDTOInfo> relationShipDTOInfos = new HashSet<>();
+        for (RelationShip relationShip : getAllRelationShips(milestoneId))
+            relationShipDTOInfos.add(DTOConverter.toRelationShipDTOInfo(relationShip));
+        return relationShipDTOInfos;
+    }
+
+    @Override
+    public void setStartTaskNode(long milestoneId, long nodeId) throws IllegalArgumentException {
+
+    }
+
+    @Override
+    public void setEndTaskNode(long milestoneId, long nodeId) throws IllegalArgumentException {
+
+    }
+
+    @Override
+    public Set<TaskDTOInfo> getExecutedTasks(long milestoneId) {
+        return null;
+    }
+
+    @Override
+    public Set<TaskDTOInfo> getNotExecutedTasks(long milestoneId) {
+        return null;
+    }
+
+    @Override
+    public Set<PersonDTOInfo> getAllWorkers(long milestoneId) {
+        return null;
+    }
+
+    @Override
+    public boolean setManager(long milestoneId, long managerId) throws IllegalArgumentException {
+        return false;
+    }
+
+    @Override
+    public PersonDTOInfo getManager(long milestoneId) {
+        return null;
     }
 
 

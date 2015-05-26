@@ -19,8 +19,6 @@ public class SingleTask {
     private Long id;
     private String duration;    //  czas trwania np 13-14 w godzinach
     private String task;
-
-    @Transient
     private boolean executed;
 
 

@@ -1,23 +1,16 @@
 package hajecs.model.DTO;
 
 import hajecs.model.Actors.PersonType;
-import hajecs.model.personalData.Address;
-import hajecs.model.personalData.Personality;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by lucjan on 21.05.15.
+ * Created by lucjan on 25.05.15.
  */
-/**
- * Created by lucjan on 21.05.15.
- */
-public class PersonFormDTO {
-    /*
-    do tworzenia nowej osoby
-     */
+public class PersonDTOInfo {
 
+    private Long id;
     private PersonType personType;
     private String username;
     private String password;
@@ -31,13 +24,16 @@ public class PersonFormDTO {
     private String country;
     private String city;
     private String zipCode;
+    private Set<Long> roles = new HashSet<>();
 
-    public PersonFormDTO() {
+    public PersonDTOInfo() {
     }
 
-    public PersonFormDTO(PersonType personType, String username, String password, String email,
-                         String name, String lastName, String birth, String telephoneNumber,
-                         String country, String city, String zipCode) {
+    public PersonDTOInfo(Long id, PersonType personType, String username,
+                         String password, String email, String name, String lastName,
+                         String birth, String telephoneNumber, String country, String city,
+                         String zipCode, Set<Long> roles) {
+        this.id = id;
         this.personType = personType;
         this.username = username;
         this.password = password;
@@ -49,6 +45,15 @@ public class PersonFormDTO {
         this.country = country;
         this.city = city;
         this.zipCode = zipCode;
+        this.roles = roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public PersonType getPersonType() {
@@ -137,5 +142,13 @@ public class PersonFormDTO {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public Set<Long> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Long> roles) {
+        this.roles = roles;
     }
 }

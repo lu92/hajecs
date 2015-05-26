@@ -7,12 +7,14 @@ import hajecs.model.Actors.Person;
 import hajecs.model.DTO.DTOConverter;
 import hajecs.model.DTO.MileStoneDTO;
 import hajecs.model.Graph.MileStone;
+import hajecs.model.Graph.TaskNode;
 import hajecs.model.Task.AbstractTask;
 import hajecs.model.Task.DailyTask;
 import hajecs.model.Task.SeveralDaysTask;
 import hajecs.repositories.*;
 import hajecs.resources.PersonResource;
 import hajecs.services.MileStoneServiceImpl;
+import hajecs.services.NodeService;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +56,9 @@ public class MileStoneServiceTest {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private NodeService nodeService;
+
     private MileStone mileStone;
     private Person manager;
 
@@ -81,8 +86,12 @@ public class MileStoneServiceTest {
 
     }
 
-    @Test @Rollback(true)
+    @Test
+    @Rollback(true)
     public void test() {
+/*
+        dbGraphRepository.deleteAll();
+        dbNodeRepository.deleteAll();
 
         Assert.assertNotNull(dbGraphRepository);
         Assert.assertNotNull(dbNodeRepository);
@@ -91,7 +100,7 @@ public class MileStoneServiceTest {
         Assert.assertNotNull(personRepository);
         Assert.assertNotNull(mileStoneService);
 
-        long id = mileStoneService.saveOrUpdateMileStone(mileStone);
+        long id = mileStoneService.createMileStone(mileStone);
         Assert.assertEquals(1, dbGraphRepository.count());
 
 
@@ -219,7 +228,7 @@ public class MileStoneServiceTest {
         Assert.assertEquals(2, mileStoneDb.findNodeByTask("bazy danych: procedury").getNumberOfNeighbours());
         Assert.assertEquals(2, mileStoneDb.findNodeByTask("bazy danych: triggery").getNumberOfNeighbours());
         Assert.assertEquals(4, mileStoneDb.findNodeByTask("Testowanie bazy danych").getNumberOfNeighbours());
-
+    }
 
 
         populatePeople();
@@ -460,5 +469,25 @@ public class MileStoneServiceTest {
                 return task;
         }
         return null;
+    }
+
+
+    public void fastTest() {
+
+        dbNodeRepository.deleteAll();
+        dbGraphRepository.deleteAll();
+        dbRelationShipRepository.deleteAll();
+
+        MileStone newMileStone = new MileStone("fast test", "fast test");
+        long milestoneId = mileStoneService.saveOrUpdateMileStone(newMileStone);
+
+        long aId = dbNodeRepository.save(new TaskNode("A")).getId();
+        long bId = dbNodeRepository.save(new TaskNode("B")).getId();
+
+        mileStoneService.addRelationShipBetweenTaskNodes(milestoneId, aId, bId);
+
+        Assert.assertEquals(1, dbRelationShipRepository.count());
+    }
+    */
     }
 }

@@ -17,15 +17,15 @@ import java.util.*;
  */
 public class MileStone extends AbstractGraph implements IMileStone{
 
-    @JsonIgnore
+//    @JsonIgnore
     @Fetch @RelatedTo(type = "MANAGER_MILESTONE", direction = Direction.BOTH)
     private Manager manager;
 
-    @JsonIgnore
+//    @JsonIgnore
     @Fetch @RelatedTo(type="START_TASK_NODE", direction= Direction.OUTGOING)
     private TaskNode startTaskNode;
 
-    @JsonIgnore
+//    @JsonIgnore
     @Fetch @RelatedTo(type="END_TASK_NODE", direction= Direction.OUTGOING)
     private TaskNode endTaskNode;
 
@@ -120,6 +120,7 @@ public class MileStone extends AbstractGraph implements IMileStone{
     }
 
     @Override
+    @JsonIgnore
     public Date getPredictableDeadline() {
         return endTaskNode.getTask().getEnd();
     }

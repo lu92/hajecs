@@ -1,9 +1,13 @@
 package hajecs.services;
 
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.LoginDataDTO;
+import hajecs.model.DTO.PersonDTOInfo;
 import hajecs.model.DTO.PersonFormDTO;
 import hajecs.model.personalData.Address;
+
+import java.util.Set;
 
 /**
  * Created by lucjan on 21.05.15.
@@ -11,8 +15,10 @@ import hajecs.model.personalData.Address;
 public interface PersonService {
     Person loginToSystem(LoginDataDTO loginDataDTO);
     Person addPerson(PersonFormDTO personFormDTO);
-    String deletePerson(long id);
-    String changeAddress(long id, Address address);
-    String addRole(long id, long role);
-    Person getPerson(long id);
+    Manager addManager(PersonFormDTO personFormDTO);
+    void deletePerson(long personId);
+    boolean addRoleToPerson(long personId, long roleId) throws IllegalArgumentException;
+    Person getPerson(long personId);
+    Set<Person> getAllPersons();
+    Set<PersonDTOInfo> getAllPersonDtoInfos();
 }

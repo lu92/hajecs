@@ -50,7 +50,7 @@ public class PersonBuilder implements AbstractPersonBuilder{
     }
 
     private  void preparePersonFromStringType(String username, String password, String email, String type) {
-        String properTypeVales [] = {"client", "consultant", "manager", "student", "worker"};
+        String properTypeVales [] = {"Manager", "Student", "Worker"};
         Class PersonsTypes [] = {
                 Manager.class, Student.class, Worker.class };
 

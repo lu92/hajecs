@@ -1,7 +1,6 @@
 package hajecs.model.Graph;
 
 import org.neo4j.graphdb.Direction;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.*;
 
 import java.util.*;
@@ -49,7 +48,6 @@ public abstract class AbstractNode {
         this.id = id;
         this.name = name;
     }
-
 
 
     public Set<AbstractNode> getNeighbourNodeStorage() {

@@ -2,6 +2,8 @@ package hajecs;
 
 import java.io.IOException;
 
+import hajecs.repositories.DBGraphRepository;
+import hajecs.resources.MileStoneResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,6 +24,9 @@ public class Neo4jTestApplication implements CommandLineRunner{
     @Autowired
     GraphDatabase graphDatabase;
 
+    @Autowired
+    private DBGraphRepository dbGraphRepository;
+
     @Transactional
     public static void main(String[] args) throws IOException {
 
@@ -32,6 +37,7 @@ public class Neo4jTestApplication implements CommandLineRunner{
 
     @Override
     public void run(String... strings) throws Exception {
+
         /*
         Person greg = new Person("Greg");
         Person roy = new Person("Roy");

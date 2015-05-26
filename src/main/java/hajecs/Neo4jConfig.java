@@ -27,6 +27,6 @@ public class Neo4jConfig extends Neo4jConfiguration {
      */
     @Bean
     GraphDatabaseService graphDatabaseService() {
-        return new GraphDatabaseFactory().newEmbeddedDatabase("cristianNeo4jTest.db");
+        return new GraphDatabaseFactory().newEmbeddedDatabase("cristianNeo4jTest2.db");
     }
 }

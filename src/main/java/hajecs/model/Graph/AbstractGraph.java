@@ -1,6 +1,5 @@
 package hajecs.model.Graph;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.*;
 
@@ -17,12 +16,12 @@ public abstract class AbstractGraph {
     protected String name;
     protected String describe;
 
-    @JsonIgnore
+//    @JsonIgnore
     @Fetch @RelatedTo(type = "GRAPH_NODE_RELATION", direction = Direction.BOTH)
     protected Set<AbstractNode> nodeStorage = new HashSet<>();
 
 
-    @JsonIgnore
+//    @JsonIgnore
     @Fetch @RelatedToVia(type = "RELATED_TO", direction = Direction.BOTH)
     protected Set<RelationShip> graphRelationShipStorage = new HashSet<>();
 
@@ -201,10 +200,10 @@ public abstract class AbstractGraph {
         AbstractNode fromNode = findNode(fromNodeId);
         Set<AbstractNode> toNodes = findNodes(toOtherNodesId);
 
-        if (fromNode == null || toNodes == null || toNodes.size() == 0)
-            System.out.println("Cannot find nodes to create relationship");
+//        if (fromNode == null || toNodes == null || toNodes.size() == 0)
+        if (fromNode == null || toNodes == null)
+            System.out.println("Big Error Cannot find nodes to create relationship");
         else {
-
             for (long node : toOtherNodesId)
                 addRelationShips(findNode(fromNodeId), findNode(node));
         }

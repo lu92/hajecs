@@ -147,6 +147,8 @@ public abstract class AbstractTask {
         return (int) (hashValue ^ (hashValue >>> 32));
     }
 
+
+
     public Long getId() {
         return id;
     }

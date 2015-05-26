@@ -7,23 +7,15 @@ public class NodeDTO {
     /*
     do tworzenia wierzcholka w milestone lub project
      */
-    private String name;
     private long graphId;
+    private String name;
 
 
     public NodeDTO() {
     }
 
-    public NodeDTO(String name, long graphId) {
-        this.name = name;
+    public NodeDTO(long graphId, String name) {
         this.graphId = graphId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
 
@@ -35,11 +27,11 @@ public class NodeDTO {
         this.graphId = graphId;
     }
 
-    @Override
-    public String toString() {
-        return "NodeDTO{" +
-                "name='" + name + '\'' +
-                ", graphId=" + graphId +
-                '}';
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
