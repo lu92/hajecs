@@ -1,10 +1,7 @@
 package hajecs.controllers;
 
 import hajecs.model.Actors.Person;
-import hajecs.model.DTO.DTOConverter;
-import hajecs.model.DTO.PersonDTOInfo;
-import hajecs.model.DTO.PersonFormDTO;
-import hajecs.model.DTO.Response;
+import hajecs.model.DTO.*;
 import hajecs.repositories.PersonRepository;
 import hajecs.resources.PersonResource;
 import hajecs.services.PersonService;
@@ -37,6 +34,20 @@ public class PersonController {
         return new Response("created new Person");
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public PersonDTOInfo login(@RequestBody LoginDataDTO loginDataDTO) {
+        PersonDTOInfo personDTOInfo = null;
+        try {
+            personDTOInfo = DTOConverter.toPersonDTOInfo(personService.loginToSystem(loginDataDTO));
+        } catch (Exception e) {
+            personDTOInfo = new PersonDTOInfo();
+            personDTOInfo.setUsername("Fake");
+            personDTOInfo.setPassword("Fake");
+        }
+        return personDTOInfo;
+
+    }
 
 
     @ResponseBody
