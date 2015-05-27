@@ -1,5 +1,6 @@
 package hajecs.services;
 
+import hajecs.filters.CriteriaDTO;
 import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.LoginDataDTO;
@@ -21,4 +22,6 @@ public interface PersonService {
     Person getPerson(long personId);
     Set<Person> getAllPersons();
     Set<PersonDTOInfo> getAllPersonDtoInfos();
+    Set<Person> doFiltr(CriteriaDTO criteriaDTO);
+
 }

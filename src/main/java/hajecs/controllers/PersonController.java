@@ -1,5 +1,6 @@
 package hajecs.controllers;
 
+import hajecs.filters.CriteriaDTO;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.*;
 import hajecs.repositories.PersonRepository;
@@ -9,6 +10,7 @@ import hajecs.services.PersonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -49,6 +51,15 @@ public class PersonController {
 
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/doFiltr", method = RequestMethod.POST)
+    Set<PersonDTOInfo> doFiltr(@RequestBody CriteriaDTO criteriaDTO) {
+        Set<PersonDTOInfo> personDTOInfos = new HashSet<>();
+        for (Person properPerson : personService.doFiltr(criteriaDTO))
+            personDTOInfos.add(DTOConverter.toPersonDTOInfo(properPerson));
+        return personDTOInfos;
+    }
 
     @ResponseBody
     @RequestMapping(value = "/getPerson/{personId}", method = RequestMethod.GET)

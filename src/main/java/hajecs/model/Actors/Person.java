@@ -6,6 +6,7 @@ import hajecs.model.Task.AbstractTask;
 import hajecs.model.personalData.Address;
 import hajecs.model.personalData.Personality;
 import hajecs.model.personalData.Role;
+import hajecs.notificationVisitor.Notification;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
@@ -42,6 +43,10 @@ public abstract class Person {
     @JsonIgnore
     @Fetch @RelatedTo(type = "PERSON_TASK_RELATION", direction = Direction.BOTH)
     private Set<AbstractTask> tasks = new HashSet<>();
+
+
+    @Fetch @RelatedTo(type = "PERSON_NOTIFICATION", direction = Direction.BOTH)
+    private Notification notification = new Notification(this);
 
     public Person() {
     }
@@ -171,5 +176,22 @@ public abstract class Person {
                 ", address=" + address +
                 ", roleStorage=" + roleStorage +
                 '}';
+    }
+
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.notification = notification;
+    }
+
+    public void setNewMessage(String newMessage){
+        this.notification.addNewNotification(newMessage);
+    }
+
+
+    public String getAllNotification(){
+        return this.notification.toString();
     }
 }

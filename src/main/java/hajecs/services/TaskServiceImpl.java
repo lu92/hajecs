@@ -1,12 +1,17 @@
 package hajecs.services;
 
+import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.DTOConverter;
 import hajecs.model.DTO.Response;
 import hajecs.model.DTO.TaskDTOInfo;
+import hajecs.model.Graph.MileStone;
+import hajecs.model.Graph.TaskNode;
 import hajecs.model.Task.AbstractTask;
 import hajecs.model.Task.SingleTask;
 import hajecs.model.personalData.Role;
+import hajecs.notificationVisitor.AllocationOfTask;
+import hajecs.notificationVisitor.ExecutedTask;
 import hajecs.repositories.PersonRepository;
 import hajecs.repositories.RoleRepository;
 import hajecs.repositories.SingleTaskRepository;
@@ -83,6 +88,7 @@ public class TaskServiceImpl implements TaskService {
 
         try {
             person = personRepository.findOne(personId);
+            person.setNewMessage(task.accept(new AllocationOfTask()));
         } catch (Exception e) {
             throw new IllegalArgumentException("person with id " + personId + " doesn't exists");
         }
@@ -122,6 +128,18 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void executeTask(long taskId, long singleTaskToExecuteId) throws IllegalArgumentException {
+
+        Manager manager = null;
+        try {
+            AbstractTask task = taskRepository.findOne(taskId);
+            manager = ((MileStone)task.getTaskNode().getGraph()).getManager();
+            String message = task.accept(new ExecutedTask());
+            manager.setNewMessage(message);
+            personRepository.save(manager);
+        } catch (Exception e) {
+
+        }
+
         try {
             AbstractTask task = taskRepository.findOne(taskId);
             for (SingleTask singleTask : task.getSingleTaskStorage()) {

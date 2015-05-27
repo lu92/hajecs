@@ -180,6 +180,11 @@ public abstract class AbstractGraph {
         return findNodes;
     }
 
+    public void addUndirectedRelationShip(String beginNodeName, String endNodeName) {
+        addRelationShips(beginNodeName, endNodeName);
+        addRelationShips(endNodeName, beginNodeName);
+    }
+
     public void addRelationShips(String fromNodeName, String toNodeNames, String ... toOtherNodes) {
 
         AbstractNode fromNode = findNode(fromNodeName);

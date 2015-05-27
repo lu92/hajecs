@@ -1,6 +1,8 @@
 package hajecs.model.Task;
 
 import hajecs.model.personalData.Role;
+import hajecs.notificationVisitor.Visitor;
+
 import java.util.*;
 
 /**
@@ -84,5 +86,10 @@ public class HourlyTask extends AbstractTask{
     @Override
     public void endTask(String taskName) {
 
+    }
+
+    @Override
+    public String accept(Visitor visitor) {
+        return visitor.visit(this);
     }
 }

@@ -1,6 +1,8 @@
 package hajecs.model.Task;
 
 import hajecs.model.personalData.Role;
+import hajecs.notificationVisitor.Visitor;
+
 import java.util.*;
 
 /**
@@ -95,5 +97,10 @@ public class DailyTask extends AbstractTask{
     public void endTask(String taskName) {
         singleTaskStorage.iterator().next().setExecuted(true);
         this.setEnd(new Date());
+    }
+
+    @Override
+    public String accept(Visitor visitor) {
+        return visitor.visit(this);
     }
 }

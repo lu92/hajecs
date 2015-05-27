@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hajecs.model.Actors.Person;
 import hajecs.model.Graph.TaskNode;
 import hajecs.model.personalData.Role;
+import hajecs.notificationVisitor.Visitable;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.neo4j.annotation.Fetch;
@@ -19,7 +20,7 @@ import java.util.*;
  * Created by lucjan on 07.05.15.
  */
 @NodeEntity
-public abstract class AbstractTask {
+public abstract class AbstractTask implements Visitable{
 
     @GraphId
     protected Long id;

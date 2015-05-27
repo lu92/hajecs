@@ -1,5 +1,6 @@
 package hajecs.services;
 
+import hajecs.filters.*;
 import hajecs.model.Actors.Manager;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.DTOConverter;
@@ -30,6 +31,9 @@ public class PersonServiceImpl implements PersonService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public Person loginToSystem(LoginDataDTO loginDataDTO) {
@@ -99,5 +103,12 @@ public class PersonServiceImpl implements PersonService {
         for (Person person : getAllPersons())
             personDTOInfos.add(DTOConverter.toPersonDTOInfo(person));
         return personDTOInfos;
+    }
+
+    @Override
+    public Set<Person> doFiltr(CriteriaDTO criteriaDTO) {
+        AvailableWorkersFiltr availableWorkersFiltr = FiltrFactory.getFiltr(criteriaDTO.getTypeOfFiltr());
+        FiltrCriteriaImplBuilder builder = new FiltrCriteriaImplBuilder(criteriaDTO, roleService.getAllRoles());
+        return availableWorkersFiltr.getAvaialbeWorkers(getAllPersons(), builder.buldFiltrCriteriaImpl());
     }
 }
