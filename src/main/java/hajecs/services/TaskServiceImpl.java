@@ -88,8 +88,9 @@ public class TaskServiceImpl implements TaskService {
 
         try {
             person = personRepository.findOne(personId);
-            person.setNewMessage(task.accept(new AllocationOfTask()));
+            person.setNotificationMessage(task.accept(new AllocationOfTask()));
 //            person.setNewMessage("hello");
+            personRepository.save(person);
         } catch (Exception e) {
             throw new IllegalArgumentException("person with id " + personId + " doesn't exists");
         }
@@ -135,7 +136,7 @@ public class TaskServiceImpl implements TaskService {
             AbstractTask task = taskRepository.findOne(taskId);
             manager = ((MileStone)task.getTaskNode().getGraph()).getManager();
             String message = task.accept(new ExecutedTask());
-            manager.setNewMessage(message);
+            manager.setNotificationMessage(message);
             personRepository.save(manager);
         } catch (Exception e) {
 

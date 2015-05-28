@@ -7,6 +7,7 @@ import hajecs.model.personalData.Address;
 import hajecs.model.personalData.Personality;
 import hajecs.model.personalData.Role;
 import hajecs.notificationVisitor.Notification;
+import hajecs.notificationVisitor.SingleNotificationMessage;
 import org.neo4j.graphdb.Direction;
 import org.springframework.data.neo4j.annotation.Fetch;
 import org.springframework.data.neo4j.annotation.GraphId;
@@ -201,5 +202,49 @@ public abstract class Person {
 
     public void setTasks(Set<AbstractTask> tasks) {
         this.tasks = tasks;
+    }
+
+//    messages
+    protected int notReadMassages = 0;
+    protected int lastMessages =1;
+
+    @Fetch @RelatedTo(type = "Mess",direction = Direction.BOTH)
+    protected Set<SingleNotificationMessage> notificationMessages = new HashSet<>();
+
+    public int getNotReadMassages() {
+        return notReadMassages;
+    }
+
+    public void setNotReadMassages(int notReadMassages) {
+        this.notReadMassages = notReadMassages;
+    }
+
+    public int getLastMessages() {
+        return lastMessages;
+    }
+
+    public void setLastMessages(int lastMessages) {
+        this.lastMessages = lastMessages;
+    }
+
+    public Set<SingleNotificationMessage> getNotificationMessages() {
+        return notificationMessages;
+    }
+
+    public void setNotificationMessages(Set<SingleNotificationMessage> notificationMessages) {
+        this.notificationMessages = notificationMessages;
+    }
+
+    public void setNotificationMessage(String mess){
+        this.notificationMessages.add(new SingleNotificationMessage(mess,lastMessages++));
+    }
+
+    public void markAsRead(long mes_id){
+        for(SingleNotificationMessage s: this.notificationMessages){
+            if(s.getBd_id()==mes_id){
+                s.markAsRead();
+                notReadMassages--;
+            }
+        }
     }
 }

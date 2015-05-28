@@ -3,6 +3,7 @@ package hajecs.controllers;
 import hajecs.filters.CriteriaDTO;
 import hajecs.model.Actors.Person;
 import hajecs.model.DTO.*;
+import hajecs.notificationVisitor.SingleNotificationMessage;
 import hajecs.repositories.PersonRepository;
 import hajecs.resources.PersonResource;
 import hajecs.services.PersonService;
@@ -105,6 +106,17 @@ public class PersonController {
         return personRepository.findByUsernameAndPassword(
                 PersonResource.getJavaDeveloperAdamWojcik().getUsername(),
                 PersonResource.getJavaDeveloperAdamWojcik().getPassword());
+    }
+
+    @RequestMapping(value = "/notification/{person_id}",method = RequestMethod.GET)
+    public Set<SingleNotificationMessage> notificationMessages(@PathVariable("person_id") long person_id){
+        return personService.getPerson(person_id).getNotificationMessages();
+    }
+    @RequestMapping(value = "/readNotification/{person_id}/{mess_id}")
+    public void markNotificatonAsRead(@PathVariable("person_id") long personId, @PathVariable("mess_id") long mesId){
+        Person p = personService.getPerson(personId);
+        p.markAsRead(mesId);
+        personRepository.save(p);
     }
 
 }
