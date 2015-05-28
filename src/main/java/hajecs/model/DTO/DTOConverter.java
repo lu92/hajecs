@@ -140,6 +140,7 @@ public class DTOConverter {
     }
 
 
+
     public static TaskDTOInfo toTaskDTOInfo(AbstractTask abstractTask) {
         TaskDTOInfo taskDTOInfo = new TaskDTOInfo();
         taskDTOInfo.setId(abstractTask.getId());
