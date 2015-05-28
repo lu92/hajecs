@@ -119,6 +119,8 @@ public class DTOConverter {
 
     public static TaskNode toTaskNode(TaskNodeDTO taskNodeDTO) {
         TaskNode taskNode = new TaskNode(taskNodeDTO.getName());
+        taskNode.setX(taskNodeDTO.getX());
+        taskNodeDTO.setY(taskNodeDTO.getY());
         return taskNode;
     }
 
@@ -127,6 +129,8 @@ public class DTOConverter {
         if (taskNode != null){
             taskNodeDTOInfo.setId(taskNode.getId());
             taskNodeDTOInfo.setName(taskNode.getName());
+            taskNodeDTOInfo.setX(taskNode.getX());
+            taskNodeDTOInfo.setY(taskNode.getY());
             for (AbstractNode neighbourNode : taskNode.getNeighbourNodeStorage())
                 taskNodeDTOInfo.getNeighbours().add(neighbourNode.getId());
             if (taskNode.getTask() != null)

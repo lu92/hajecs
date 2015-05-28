@@ -194,4 +194,12 @@ public abstract class Person {
     public String getAllNotification(){
         return this.notification.toString();
     }
+
+    public Set<AbstractTask> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<AbstractTask> tasks) {
+        this.tasks = tasks;
+    }
 }

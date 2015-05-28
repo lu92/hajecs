@@ -46,11 +46,11 @@ public class TaskController {
     @ResponseBody
     @RequestMapping(value = "/addPersonToTask/{taskId}/{personId}", method = RequestMethod.GET)
     public Response addPersonToTask(@PathVariable("taskId") long taskId, @PathVariable("personId") long personId) {
-        try {
+//        try {
             taskService.addPersonToTask(taskId, personId);
-        } catch (Exception e) {
-            return new Response("Invalid Data");
-        }
+//        } catch (Exception e) {
+//            return new Response("Invalid Data");
+//        }
         return new Response("person was added to task");
     }
 

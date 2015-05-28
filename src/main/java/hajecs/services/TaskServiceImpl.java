@@ -89,6 +89,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             person = personRepository.findOne(personId);
             person.setNewMessage(task.accept(new AllocationOfTask()));
+//            person.setNewMessage("hello");
         } catch (Exception e) {
             throw new IllegalArgumentException("person with id " + personId + " doesn't exists");
         }

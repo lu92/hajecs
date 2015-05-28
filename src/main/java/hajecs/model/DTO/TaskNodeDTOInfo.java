@@ -11,6 +11,33 @@ public class TaskNodeDTOInfo {
     private String name;
     private Set<Long> neighbours = new HashSet<>();
     private Long taskId;
+    private double x;
+    private double y;
+
+    public TaskNodeDTOInfo(Long id, String name, Set<Long> neighbours, Long taskId, double x, double y) {
+        this.id = id;
+        this.name = name;
+        this.neighbours = neighbours;
+        this.taskId = taskId;
+        this.x = x;
+        this.y = y;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
 
     public TaskNodeDTOInfo() {
     }
